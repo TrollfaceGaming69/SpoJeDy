@@ -24,6 +24,7 @@ import spotify_logo from '../assets/icon/spotify_logo.png'
 import clock_icon from '../assets/icon/clock_icon.png'
 import yoisabi1 from "../assets/videos/yoisabi1.mp4"
 import yoisabi2 from "../assets/videos/yoisabi2.mp4"
+import loop_active from "../assets/icon/loop_active.png"
 
 export const assets = {
     bell_icon,
@@ -49,7 +50,8 @@ export const assets = {
     arrow_left,
     arrow_right,
     clock_icon,
-    spotify_logo
+    spotify_logo,
+    loop_active
 }
 
 export const musicData = [

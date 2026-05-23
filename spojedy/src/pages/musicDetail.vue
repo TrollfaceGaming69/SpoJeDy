@@ -3,7 +3,6 @@ import { musicData, assets } from '@/assets/assets';
 import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-
 const {id} = useRoute().params;
 const selectedSong = ref(musicData[id] || musicData[0]);
 const navigate = useRouter();
@@ -12,6 +11,7 @@ const isPlaying = ref(false);
 const currentTime = ref(0);
 const duration = ref(0);
 const audioElement = ref(null);
+const isLooping = ref(false);
 
 const togglePlayPause = () => {
   if (isPlaying.value) {
@@ -63,6 +63,19 @@ const playPreviousSong = () => {
   navigate.push({ name: 'musicdetail', params: { id: previousId } });
 };
 
+const toggleLoop = () => {
+  isLooping.value = !isLooping.value;
+};
+
+const handleSongEnd = () => {
+  if (isLooping.value) {
+    audioElement.value.currentTime = 0;
+    audioElement.value.play();
+  } else {
+    playNextSong();
+  }
+};
+
 watch(selectedSong, () => {
   if (audioElement.value) {
     audioElement.value.load();
@@ -75,7 +88,7 @@ watch(selectedSong, () => {
 
 <template>
     <div class="w-full m-2 px-6 rounded bg-[#121212] text-white overflow-auto lg:w-[75%] lg:ml-0">
-        <audio ref="audioElement" @timeupdate="onTimeUpdate" @loadedmetadata="onLoadedMetadata" @ended="playNextSong">
+        <audio ref="audioElement" @timeupdate="onTimeUpdate" @loadedmetadata="onLoadedMetadata" @ended="handleSongEnd">
             <source :src="selectedSong.src" type="audio/mpeg">
         </audio>
 
@@ -99,7 +112,7 @@ watch(selectedSong, () => {
                 <img class="w-6 cursor-pointer" :src="assets.prev_icon" alt="" @click="playPreviousSong">
                 <img class="w-6 cursor-pointer" :src="isPlaying ? assets.pause_icon : assets.play_icon" alt="" @click="togglePlayPause">
                 <img class="w-6 cursor-pointer" :src="assets.next_icon" alt="" @click="playNextSong">
-                <img class="w-6 cursor-pointer" :src="assets.loop_icon" alt="">
+                <img class="w-6 cursor-pointer" :src="isLooping ? assets.loop_active : assets.loop_icon" alt="" @click="toggleLoop">
             </div>
 
             <div class="flex items-center gap-5">

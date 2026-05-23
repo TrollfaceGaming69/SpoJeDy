@@ -79,7 +79,7 @@ const playPreviousVideo = () => {
       <img class="w-8 bg-black p-2 rounded-2xl cursor-pointer" :src="assets.arrow_right" @click="navigate.go(1)">
     </div>
 
-    <div class="relative w-full max-w-3xl mx-auto overflow-hidden bg-black rounded-lg group">
+    <div class="relative w-full max-w-7xl mx-auto overflow-hidden bg-black rounded-lg group">
 
       <video ref="videoElement" class="w-full block cursor-pointer" :src="selectedVideo.src" @click="togglePlayPause"
         @timeupdate="onTimeUpdate" @loadedmetadata="onLoadedMetadata" @ended="playNextVideo"></video>
