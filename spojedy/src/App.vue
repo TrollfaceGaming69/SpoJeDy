@@ -3,12 +3,13 @@ import { useRouter } from 'vue-router'
 import Navbar from '@/component/navbar.vue';
 import SideBar from '@/component/sideBar.vue';
 import SongPlayer from '@/component/songPlayer.vue';
+import LoginPage from './pages/loginPage.vue';
 
 const router = useRouter()
 </script>
 
 <template>
-    <div class="h-screen bg-black">
+      <div class="h-screen bg-black">
         <Navbar/>
         <div class="h-[90%] flex">
             <SideBar/>

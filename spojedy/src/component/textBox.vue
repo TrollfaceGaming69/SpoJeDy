@@ -28,7 +28,7 @@ defineProps({
       height,
       `placeholder:${placeholderSize}`,
       'px-2.5 py-2.5 border border-[#3B4B54] placeholder:font-normal placeholder:text-[#94A3B8]',
-      'hover:border-green-600 hover:border-2 transition-all duration-220 outline-none'
+      'hover:border-green-600 hover:border-2 transition-all duration-220 outline-none w-full'
     ]"
   />
 </template>

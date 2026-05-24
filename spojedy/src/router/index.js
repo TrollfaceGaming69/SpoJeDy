@@ -5,6 +5,9 @@ import MusicDetail from '@/pages/musicDetail.vue'
 import MusicVideoPage from '@/pages/musicVideoPage.vue'
 import MusicVideoDetail from '@/pages/musicVideoDetail.vue'
 import Profile from '@/pages/profile.vue'
+import LoginPage from '@/pages/loginPage.vue'
+import RegisterPage from '@/pages/registerPage.vue'
+import Display from '@/display.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,7 +41,22 @@ const router = createRouter({
       path: "/profile",
       name: "profile",
       component: Profile
-    }
+    },
+    /*{
+      path: "/login",
+      name: "login",
+      component: LoginPage
+    },
+    {
+      path: "/register",
+      name: "register",
+      component: RegisterPage
+    },
+    {
+      path: "/display",
+      name: "display",
+      component: Display
+    }*/
   ],
 })
 

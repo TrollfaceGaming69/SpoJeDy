@@ -1,11 +1,25 @@
 <script setup>
+import { ref } from 'vue';
 import MusicVideoItem from '@/component/musicVideoItem.vue';
 import { musicData, assets, videoData } from '@/assets/assets';
 import SongItem from '@/component/songItem.vue';
 import { useRouter } from 'vue-router';
 
-
 const navigate = useRouter();
+
+const profileImage = ref(null);
+const fileInput = ref(null);
+
+const triggerFileInput = () => {
+    fileInput.value.click();
+};
+
+const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        profileImage.value = URL.createObjectURL(file);
+    }
+};
 </script>
 
 <template>
@@ -15,13 +29,20 @@ const navigate = useRouter();
             <img class="w-8 bg-black p-2 rounded-2xl cursor-pointer" :src="assets.arrow_right" alt="" @click="navigate.go(1)">
         </div>
 
-        <div class="">
-            <img class="w-20 rounded-full" src="" alt="">
+        <div class="flex items-center gap-4">
+            <!-- Hidden file input -->
+            <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="handleFileChange">
+            
+            <!-- Clickable Profile Image -->
+            <img 
+                class="w-80 h-80 rounded-full cursor-pointer object-cover bg-[#535353]" 
+                :src="profileImage || assets.profile_icon" 
+                alt="Profile Picture" 
+                @click="triggerFileInput"
+            >
             <div>
                 <p class="">Profile</p>
-                <h1 class="text-2xl"></h1>
-                
-                <p></p>
+                <h1 class="text-7xl font-bold">User Name</h1>
             </div>
         </div>
 
