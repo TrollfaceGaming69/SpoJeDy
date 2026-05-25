@@ -31,11 +31,13 @@ npm install express mongoose cors nodemon
 ### Masuk folder spojedy
 
 ```sh
+cd spojedy
 npm run dev (buat jalanin frontend)
 ```
 
-### Masuk folder backed
+### Masuk folder backed (buka terminal baru)
 
 ```sh
+cd backend
 npm run dev (buat jalanin server api backend)
 ```
