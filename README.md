@@ -27,6 +27,13 @@ npm install express mongoose cors nodemon bcrypt jsonwebtoken
 npm install express-mongo-sanitize express-rate-limit 
 ```
 
+### Tambah Mongo URI dan token JWT di .env
+
+```sh
+MONGO_URI=mongodb+srv://santoso:<password>@spojedycluster.ywus1cc.mongodb.net/?appName=<AppName>
+(ganti <passowrd> dan <AppName>)
+```
+
 ## Tutor Jalanin
 
 ### Masuk folder spojedy
