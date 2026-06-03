@@ -20,24 +20,20 @@ const navigateToLogin = () => {
 const validateForm = () => {
     errors.value = [];
 
-    // Validate username
     if (!username.value || typeof username.value !== 'string') {
         errors.value.push('Username must be a valid string');
     }
 
-    // Validate email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email.value || !emailRegex.test(email.value)) {
         errors.value.push('Email must be valid');
     }
 
-    // Validate password
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
     if (!password.value || !passwordRegex.test(password.value)) {
         errors.value.push('Password must have combination of letters and numbers with minimum length of 8 characters');
     }
 
-    // Validate password confirmation
     if (password.value !== confirmPassword.value) {
         errors.value.push('Password confirmation must match password');
     }

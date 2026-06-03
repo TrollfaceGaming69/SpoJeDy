@@ -9,26 +9,21 @@ import MusicVideoItem from '@/component/musicVideoItem.vue';
 
 const navigate = useRouter();
 
-// Reactive state
 const albums = ref(albumData);
 const songs = ref(musicData);
 const videos = ref(videoData);
 
-// Fetch data on mount
 onMounted(async () => {
-  // Fetch albums
   const fetchedAlbums = await apiService.getAlbums();
   if (fetchedAlbums.length > 0) {
     albums.value = fetchedAlbums;
   }
 
-  // Fetch songs
   const fetchedSongs = await apiService.getSongs();
   if (fetchedSongs.length > 0) {
     songs.value = fetchedSongs;
   }
 
-  // Fetch music videos
   const fetchedVideos = await apiService.getMusicVideos();
   if (fetchedVideos.length > 0) {
     videos.value = fetchedVideos;

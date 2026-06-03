@@ -13,7 +13,6 @@ const currentTime = ref(0);
 const duration = ref(0);
 const videoElement = ref(null);
 
-// Fetch video data on mount
 onMounted(async () => {
   const fetchedVideo = await apiService.getMusicVideoById(id);
   if (fetchedVideo) {

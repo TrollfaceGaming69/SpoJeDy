@@ -30,10 +30,8 @@ const handleFileChange = (event) => {
         </div>
 
         <div class="flex items-center gap-4">
-            <!-- Hidden file input -->
             <input type="file" ref="fileInput" class="hidden" accept="image/*" @change="handleFileChange">
-            
-            <!-- Clickable Profile Image -->
+
             <img 
                 class="w-80 h-80 rounded-full cursor-pointer object-cover bg-[#535353]" 
                 :src="profileImage || assets.profile_icon" 

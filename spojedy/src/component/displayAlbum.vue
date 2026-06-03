@@ -10,25 +10,20 @@ const albumSongs = ref([]);
 
 const navigate = useRouter();
 
-// Fetch album and songs data on mount
 onMounted(async () => {
-  // Fetch the specific album
   const fetchedAlbum = await apiService.getAlbumById(id);
   if (fetchedAlbum) {
     albumsData.value = fetchedAlbum;
   }
 
-  // Fetch all songs
   const allSongs = await apiService.getSongs();
   if (allSongs.length > 0) {
-    // If the album has song references, use those; otherwise use all fetched songs
     if (albumsData.value.songs && albumsData.value.songs.length > 0) {
       albumSongs.value = allSongs.filter(song => albumsData.value.songs.includes(song.id));
     } else {
       albumSongs.value = allSongs;
     }
   } else {
-    // Fallback to hardcoded data if API fails
     albumSongs.value = getAlbumSongs();
   }
 });

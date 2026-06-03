@@ -14,7 +14,6 @@ const duration = ref(0);
 const audioElement = ref(null);
 const isLooping = ref(false);
 
-// Fetch song data on mount
 onMounted(async () => {
   const fetchedSong = await apiService.getSongById(id);
   if (fetchedSong) {
