@@ -47,7 +47,7 @@ npm run dev (buat jalanin frontend)
 
 ```sh
 cd backend
-npm run dev (buat jalanin server api backend)
+npm run dev (buat jalanin server)
 ```
 
 
