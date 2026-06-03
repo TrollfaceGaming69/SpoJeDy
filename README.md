@@ -30,8 +30,8 @@ npm install express-mongo-sanitize express-rate-limit
 ### Tambah Mongo URI di .env
 
 ```sh
-MONGO_URI=mongodb+srv://santoso:<password>@spojedycluster.ywus1cc.mongodb.net/?appName=<AppName>
-(ganti <passowrd> dan <AppName>)
+MONGO_URI=mongodb+srv://<namaUser>:<password>@spojedycluster.ywus1cc.mongodb.net/?appName=<AppName>
+(ganti <namaUser> <passowrd> dan <AppName>)
 ```
 
 ## Tutor Jalanin
