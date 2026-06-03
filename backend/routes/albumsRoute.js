@@ -1,17 +1,28 @@
-import { Router } from "express";
-import Albums from "../models/albums"
-import Songs from "../models/songs"
+import express from "express"
+import Album from "../models/albums"
 
-const router = Router()
+const router = express.Router();
 
-router.get("/", async (req, res) => {
-    const albums = await Albums.find()
-    res.json(albums)
-})
+router.get("/albums", async (req, res) => {
+    try{
+        const albums = await Album.find({}, {_id: 0, __v: 0});
+        res.status(200).json(albums);
+    }
+    catch(err){
+        res.status(500).json({message: "Server error", error: err.message});
+    }
+});
 
-router.get("/:id/songs", async (req, res) => {
-    const album = await Albums.findById(req.params.id)
-    res.json(songs)
-})
+router.get("/albums/:id", async (req, res) => {
+    try{
+        const albums = await Album.findOne({id: req.params.id}, {_id: 0, __v: 0});
 
-export default router
+        if(!albums) return res.status(404).json({message: "Album not found"});
+        res.status(200).json(albums);
+    }
+    catch(err){
+        res.status(500).json({message: "Server error", error: err.message})
+    }
+});
+
+export default router;

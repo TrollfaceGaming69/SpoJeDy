@@ -1,15 +1,41 @@
 <script setup>
 import { albumData, assets, musicData } from '@/assets/assets';
 import { useRoute, useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
+import { apiService } from '@/api/apiService';
 
 const {id} = useRoute().params;
-const albumsData = albumData[id];
+const albumsData = ref(albumData[id] || {});
+const albumSongs = ref([]);
 
 const navigate = useRouter();
 
+// Fetch album and songs data on mount
+onMounted(async () => {
+  // Fetch the specific album
+  const fetchedAlbum = await apiService.getAlbumById(id);
+  if (fetchedAlbum) {
+    albumsData.value = fetchedAlbum;
+  }
+
+  // Fetch all songs
+  const allSongs = await apiService.getSongs();
+  if (allSongs.length > 0) {
+    // If the album has song references, use those; otherwise use all fetched songs
+    if (albumsData.value.songs && albumsData.value.songs.length > 0) {
+      albumSongs.value = allSongs.filter(song => albumsData.value.songs.includes(song.id));
+    } else {
+      albumSongs.value = allSongs;
+    }
+  } else {
+    // Fallback to hardcoded data if API fails
+    albumSongs.value = getAlbumSongs();
+  }
+});
+
 const getAlbumSongs = () => {
-    if (!albumsData || !albumsData.songs) return [];
-    return musicData.filter(song => albumsData.songs.includes(song.id));
+    if (!albumsData.value || !albumsData.value.songs) return [];
+    return musicData.filter(song => albumsData.value.songs.includes(song.id));
 };
 
 const goToMusicDetail = (songId) => {
@@ -44,7 +70,7 @@ const goToMusicDetail = (songId) => {
 
         <hr class="h-px bg-white">
 
-        <div v-for="(item, index) in getAlbumSongs()" :key="index" @click="goToMusicDetail(item.id)"
+        <div v-for="(item, index) in albumSongs" :key="index" @click="goToMusicDetail(item.id)"
             class="grid grid-cols-3 sm:grid-cols-4 gap-2 p-2 items-center text-[#a7a7a7] hover:bg-[#ffffff2b] cursor-pointer">
             <p class="text-white">
                 <b class="mr-4 text-[#a7a7a7]">{{ index + 1 }}</b>

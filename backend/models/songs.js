@@ -1,9 +1,12 @@
-import mongoose from "mongoose"
+import mongoose, { mongo } from "mongoose"
 
-export default mongoose.model("Songs", new mongoose.Schema({
-    id:  {type: Number, required: true},
-    name: {type: String, required: true},
-    src: {type: String, required: true},
+const songSchema = new mongoose.Schema({
+    id: Number,
+    name: String,
+    src: String,
     cover: String,
-    artist: String
-}, {timestamps: true}))
+    artist: String,
+    duration: String,
+});
+
+export default mongoose.model("Song", songSchema);

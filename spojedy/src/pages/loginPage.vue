@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import primaryButton from '@/component/primaryButton.vue';
 import textBox from '@/component/textBox.vue';
+import { authService } from '@/api/authService';
 
 const navigate = useRouter();
 
@@ -26,10 +27,16 @@ const validateForm = () => {
   return errors.value.length === 0;
 };
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (validateForm()) {
-    console.log('Form is valid', { username: username.value, email: email.value });
-    navigate.push({name: "display"})
+    const result = await authService.login(email.value, password.value);
+
+    if (result.ok) {
+      localStorage.setItem("token", result.data.token);
+      navigate.push({ name: "display" });
+    } else {
+      errors.value = [result.data.message || 'Login failed'];
+    }
   }
 };
 

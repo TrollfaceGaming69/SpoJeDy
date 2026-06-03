@@ -122,7 +122,7 @@ export const musicData = [
 ]
 
 
-//for video id 1 and 2 i put the src locally since my imagekit is already at the limit for processing more videos
+//for video id 2 and 3 i put the src locally since my imagekit is already at the limit for processing more videos
 export const videoData = [
     {
         id: 0,

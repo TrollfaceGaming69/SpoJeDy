@@ -1,7 +1,8 @@
 <script setup>
 import { musicData, assets } from '@/assets/assets';
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { apiService } from '@/api/apiService';
 
 const {id} = useRoute().params;
 const selectedSong = ref(musicData[id] || musicData[0]);
@@ -12,6 +13,14 @@ const currentTime = ref(0);
 const duration = ref(0);
 const audioElement = ref(null);
 const isLooping = ref(false);
+
+// Fetch song data on mount
+onMounted(async () => {
+  const fetchedSong = await apiService.getSongById(id);
+  if (fetchedSong) {
+    selectedSong.value = fetchedSong;
+  }
+});
 
 const togglePlayPause = () => {
   if (isPlaying.value) {

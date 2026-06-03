@@ -1,9 +1,19 @@
 <script setup>
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { assets, videoData } from '@/assets/assets';
+import { apiService } from '@/api/apiService';
 import MusicVideoItem from '@/component/musicVideoItem.vue';
 
 const navigate = useRouter();
+const videos = ref(videoData);
+
+onMounted(async () => {
+  const fetchedVideos = await apiService.getMusicVideos();
+  if (fetchedVideos.length > 0) {
+    videos.value = fetchedVideos;
+  }
+});
 </script>
 
 <template>
@@ -23,7 +33,7 @@ const navigate = useRouter();
             <h1 class="my-5 font-bold text-2xl">Music Videos</h1>
 
             <div class="flex overflow-auto">
-                <MusicVideoItem v-for="video in videoData" :key="video.id" :id="video.id" :name="video.name" :artist="video.artist" :cover="video.cover"/>
+                <MusicVideoItem v-for="video in videos" :key="video.id" :id="video.id" :name="video.name" :artist="video.artist" :cover="video.cover"/>
             </div>
         </div>
 

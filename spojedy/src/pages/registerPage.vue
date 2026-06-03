@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import primaryButton from '@/component/primaryButton.vue';
 import textBox from '@/component/textBox.vue';
 import { useRouter } from 'vue-router';
+import { authService } from '@/api/authService';
 
 const username = ref('');
 const email = ref('');
@@ -44,9 +45,15 @@ const validateForm = () => {
     return errors.value.length === 0;
 };
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
     if (validateForm()) {
-        navigate.push({ name: "login" });
+        const result = await authService.register(username.value, email.value, password.value);
+        
+        if (result.ok) {
+            navigate.push({ name: "login" });
+        } else {
+            errors.value = [result.data.message || 'Registration failed'];
+        }
     }
 };
 

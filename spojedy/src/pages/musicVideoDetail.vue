@@ -1,7 +1,8 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
 import { videoData, assets } from '@/assets/assets';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { apiService } from '@/api/apiService';
 
 const { id } = useRoute().params;
 const selectedVideo = ref(videoData[id] || videoData[0]);
@@ -11,6 +12,14 @@ const isPlaying = ref(false);
 const currentTime = ref(0);
 const duration = ref(0);
 const videoElement = ref(null);
+
+// Fetch video data on mount
+onMounted(async () => {
+  const fetchedVideo = await apiService.getMusicVideoById(id);
+  if (fetchedVideo) {
+    selectedVideo.value = fetchedVideo;
+  }
+});
 
 const togglePlayPause = () => {
   if (isPlaying.value) {
