@@ -33,7 +33,7 @@ const handleSubmit = async () => {
 
     if (result.ok) {
       localStorage.setItem("token", result.data.token);
-      navigate.push({ name: "display" });
+      navigate.push({ name: "home" });
     } else {
       errors.value = [result.data.message || 'Login failed'];
     }

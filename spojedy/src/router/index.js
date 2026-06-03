@@ -8,6 +8,7 @@ import Profile from '@/pages/profile.vue'
 import LoginPage from '@/pages/loginPage.vue'
 import RegisterPage from '@/pages/registerPage.vue'
 import Display from '@/display.vue'
+import AuthLayout from '@/layouts/AuthLayout.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,49 +16,115 @@ const router = createRouter({
     {
       path: "/",
       name: "home",
-      component: HomePage
+      component: Display,
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: "",
+          component: HomePage
+        }
+      ]
     },
     {
       path: "/album/:id",
       name: "albumdetail",
-      component: displayAlbum
+      component: Display,
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: "",
+          component: displayAlbum
+        }
+      ]
     },
     {
       path: "/music/:id",
       name: "musicdetail",
-      component: MusicDetail
+      component: Display,
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: "",
+          component: MusicDetail
+        }
+      ]
     },
     {
       path: "/musicvideo",
       name: "musicvideo",
-      component: MusicVideoPage
+      component: Display,
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: "",
+          component: MusicVideoPage
+        }
+      ]
     },
     {
       path: "/musicvideo/:id",
       name: "videodetail",
-      component: MusicVideoDetail
+      component: Display,
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: "",
+          component: MusicVideoDetail
+        }
+      ]
     },
     {
       path: "/profile",
       name: "profile",
-      component: Profile
+      component: Display,
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: "",
+          component: Profile
+        }
+      ]
     },
     {
       path: "/login",
       name: "login",
-      component: LoginPage
+      component: AuthLayout,
+      meta: { requiresAuth: false },
+      children: [
+        {
+          path: "",
+          component: LoginPage
+        }
+      ]
     },
     {
       path: "/register",
       name: "register",
-      component: RegisterPage
-    },
-    {
-      path: "/display",
-      name: "display",
-      component: Display
+      component: AuthLayout,
+      meta: { requiresAuth: false },
+      children: [
+        {
+          path: "",
+          component: RegisterPage
+        }
+      ]
     }
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('token')
+  const requiresAuth = to.meta.requiresAuth
+
+  if (requiresAuth && !isAuthenticated) {
+    next({ name: 'login' })
+  } else if (!requiresAuth && isAuthenticated && (to.name === 'login' || to.name === 'register')) {
+    next({ name: 'home' })
+  } else if (to.path === '/') {
+    next({ name: 'home' })
+  } else {
+    next()
+  }
 })
 
 export default router
