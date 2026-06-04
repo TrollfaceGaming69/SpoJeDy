@@ -63,7 +63,7 @@ npm start
 ## Projek-Mulmed - Project Structure
 
 ```
-projek-mulmed/
+SpoJeDy/
 │
 ├── 📦 package.json (Root)
 ├── README.md
@@ -148,7 +148,7 @@ projek-mulmed/
             └── index.js
 ```
 
-## 🎯 Key Directory Functions
+## Key Directory Functions
 
 | Folder | Purpose |
 |--------|---------|
