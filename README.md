@@ -16,8 +16,8 @@ npm install tailwindcss @tailwindcss/vite
 ### Masuk folder spojedy
 
 ```sh
+cd spojedy
 npm install
-npm install @imagekit/vue
 ```
 
 ### Masuk folder backed
