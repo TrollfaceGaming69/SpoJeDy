@@ -1,9 +1,6 @@
 <script setup>
-import { useRouter } from 'vue-router'
 import Navbar from '@/component/navbar.vue';
 import SideBar from '@/component/sideBar.vue';
-import SongPlayer from '@/component/songPlayer.vue';
-import LoginPage from './pages/loginPage.vue';
 </script>
 
 <template>
