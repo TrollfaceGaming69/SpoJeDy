@@ -8,6 +8,12 @@ projek matkul binus digidaw awikwok
 
 ## Tutor Setup
 
+### Clone repository
+```sh
+git clone [https://github.com/username/nama-repositori.git](https://github.com/username/nama-repositori.git)
+cd nama-repositori
+```
+
 ### Di folder utama
 ```sh
 npm install tailwindcss @tailwindcss/vite
@@ -16,15 +22,15 @@ npm install tailwindcss @tailwindcss/vite
 ### Masuk folder spojedy
 
 ```sh
+cd spojedy
 npm install
-npm i @imagekit/vue
 ```
 
 ### Masuk folder backed
 
 ```sh
-npm install express mongoose cors nodemon bcrypt jsonwebtoken
-npm install express-mongo-sanitize express-rate-limit 
+cd backend
+npm install
 ```
 
 ### Tambah Mongo URI di .env
@@ -47,7 +53,7 @@ npm run dev (buat jalanin frontend)
 
 ```sh
 cd backend
-npm run dev (buat jalanin server)
+npm start
 ```
 
 
