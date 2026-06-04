@@ -17,14 +17,14 @@ npm install tailwindcss @tailwindcss/vite
 
 ```sh
 npm install
-npm i @imagekit/vue
+npm install @imagekit/vue
 ```
 
 ### Masuk folder backed
 
 ```sh
-npm install express mongoose cors nodemon bcrypt jsonwebtoken
-npm install express-mongo-sanitize express-rate-limit 
+cd backend
+npm install
 ```
 
 ### Tambah Mongo URI di .env
