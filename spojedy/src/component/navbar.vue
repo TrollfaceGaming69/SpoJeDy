@@ -1,11 +1,24 @@
 <script setup>
 import { useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
 
 const navigate = useRouter();
+const isLoggedIn = ref(false);
+
+onMounted(() => {
+    const token = localStorage.getItem('token');
+    isLoggedIn.value = !!token;
+});
 
 const goToProfile = () => {
-    navigate.push({ name: "profile" });
-}
+    if (isLoggedIn.value) {
+        navigate.push({ name: "profile" });
+    }
+};
+
+const goToLogin = () => {
+    navigate.push({ name: "login" });
+};
 </script>
 
 <template>
@@ -26,8 +39,10 @@ const goToProfile = () => {
             </div>
         </div>
 
-        <div class="flex items-center gap-4 cursor-pointer">
-            <img class="w-7 h-7 rounded-full" src="" alt="" @click="goToProfile">
+        <div class="flex items-center gap-4">
+             <p v-if="!isLoggedIn" class="bg-white text-black text-[15px] px-4 py-1 rounded-2xl hidden md:block cursor-pointer" @click="goToLogin">Login</p>
+
+            <img v-if="isLoggedIn" class="w-7 h-7 rounded-full cursor-pointer" src="" alt="" @click="goToProfile">
         </div>
     </div>
 </template>
