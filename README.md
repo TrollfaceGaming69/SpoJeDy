@@ -8,6 +8,12 @@ projek matkul binus digidaw awikwok
 
 ## Tutor Setup
 
+### Clone repository
+```sh
+git clone [https://github.com/username/nama-repositori.git](https://github.com/username/nama-repositori.git)
+cd nama-repositori
+```
+
 ### Di folder utama
 ```sh
 npm install tailwindcss @tailwindcss/vite
