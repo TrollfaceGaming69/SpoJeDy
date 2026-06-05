@@ -5,7 +5,7 @@ import ratelimit from "express-rate-limit"
 const router = express.Router();
 
 const registerLimiter = ratelimit({
-    windowMs: 5 * 60 * 100,
+    windowMs: 5 * 60 * 1000,
     max: 3,
     skipSuccessfulRequests: true,
     standardHeaders: true,
@@ -13,8 +13,10 @@ const registerLimiter = ratelimit({
     message: {message: "Too many failed attempts, try again after 5 minutes"}
 })
 
-router.post("/register", registerLimiter, async(requestAnimationFrame, res) => {
+router.post("/register", registerLimiter, async(req, res) => {
     const {username, email, password} = req.body;
+    
+    console.log('Register request received:', {username, email, passwordLength: password?.length});
     
     try{
         const existingUser = await User.findOne({email});
@@ -28,6 +30,7 @@ router.post("/register", registerLimiter, async(requestAnimationFrame, res) => {
         res.status(201).json({message: "User has been registered"})
     }
     catch(err){
+        console.error('Registration error:', err);
         res.status(500).json({message: "Server error", error: err.message})
     }
 });

@@ -17,10 +17,14 @@ defineProps({
     default: 'text-base'
   }
 });
+
+const emit = defineEmits(['click']);
 </script>
 
 <template>
     <button 
+    type="button"
+    @click="emit('click')"
     :class="[
       width, 
       height, 

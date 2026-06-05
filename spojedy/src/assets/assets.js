@@ -25,6 +25,7 @@ import clock_icon from '../assets/icon/clock_icon.png'
 import yoisabi1 from "../assets/videos/yoisabi1.mp4"
 import yoisabi2 from "../assets/videos/yoisabi2.mp4"
 import loop_active from "../assets/icon/loop_active.png"
+import eye from "../assets/icon/eye.png"
 
 export const assets = {
     bell_icon,
@@ -51,7 +52,8 @@ export const assets = {
     arrow_right,
     clock_icon,
     spotify_logo,
-    loop_active
+    loop_active,
+    eye
 }
 
 //for video id 2 and 3 i put the src locally since my imagekit is already at the limit for processing more videos

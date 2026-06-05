@@ -3,12 +3,15 @@ const API_BASE_URL = 'http://localhost:3000/api';
 export const authService = {
   async register(username, email, password) {
     try {
+      console.log('Making POST request to:', `${API_BASE_URL}/register`);
       const response = await fetch(`${API_BASE_URL}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password })
       });
+      console.log('Response status:', response.status);
       const data = await response.json();
+      console.log('Response data:', data);
       return { ok: response.ok, status: response.status, data };
     } catch (error) {
       console.error('Error during registration:', error);

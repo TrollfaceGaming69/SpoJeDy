@@ -58,7 +58,7 @@ const navigateToRegister = () => {
           <textBox id="email" placeholder="Email" v-model="email" />
 
           <label for="pw" class="text-sm font-bold tracking-wide ">Password</label>
-          <textBox id="pw" placeholder="Password" v-model="password" />
+          <textBox id="pw" type="password" placeholder="Password" v-model="password" />
       </form>
 
       <div class="pb-2">

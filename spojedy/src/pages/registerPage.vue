@@ -4,6 +4,7 @@ import primaryButton from '@/component/primaryButton.vue';
 import textBox from '@/component/textBox.vue';
 import { useRouter } from 'vue-router';
 import { authService } from '@/api/authService';
+import {assets} from '@/assets/assets';
 
 const username = ref('');
 const email = ref('');
@@ -42,14 +43,21 @@ const validateForm = () => {
 };
 
 const handleSubmit = async () => {
+    console.log('Submit button clicked');
+    console.log('Form data:', { username: username.value, email: email.value, password: password.value });
+    
     if (validateForm()) {
+        console.log('Form validation passed');
         const result = await authService.register(username.value, email.value, password.value);
+        console.log('API Response:', result);
         
         if (result.ok) {
             navigate.push({ name: "login" });
         } else {
             errors.value = [result.data.message || 'Registration failed'];
         }
+    } else {
+        console.log('Form validation failed:', errors.value);
     }
 };
 
@@ -62,7 +70,7 @@ const handleSubmit = async () => {
 
             <h1 class="text-[40px] font-black tracking-tight mb-8 text-center">Register</h1>
 
-            <form action="" class="w-full flex flex-col gap-4">
+            <form @submit.prevent class="w-full flex flex-col gap-4">
 
                 <label for="usn" class="text-sm font-bold tracking-wide">Username</label>
                 <textBox id="usn" placeholder="Username" v-model="username" />
@@ -71,10 +79,10 @@ const handleSubmit = async () => {
                 <textBox id="email" placeholder="Email" v-model="email" />
 
                 <label for="pw" class="text-sm font-bold tracking-wide ">Password</label>
-                <textBox id="pw" placeholder="Password" v-model="password" />
+                <textBox id="pw" type="password" placeholder="Password" v-model="password" />
 
                 <label for="cfpw" class="text-sm font-bold tracking-wide">Confirm Password</label>
-                <textBox id="cfpw" placeholder="Password" v-model="confirmPassword" />
+                <textBox id="cfpw" type="password" placeholder="Password" v-model="confirmPassword" />
 
             </form>
 

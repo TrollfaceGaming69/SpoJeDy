@@ -1,5 +1,13 @@
 <script setup>
 defineProps({
+  modelValue: {
+    type: String,
+    default: ''
+  },
+  type: {
+    type: String,
+    default: 'text'
+  },
   placeholder: {
     type: String,
     default: 'Enter text...'
@@ -17,11 +25,15 @@ defineProps({
     default: 'text-[14px]'
   }
 });
+
+const emit = defineEmits(['update:modelValue']);
 </script>
 
 <template>
   <input
-    type="text"
+    :type="type"
+    :value="modelValue"
+    @input="emit('update:modelValue', $event.target.value)"
     :placeholder="placeholder"
     :class="[
       width,
