@@ -57,21 +57,6 @@ export const assets = {
 //for video id 2 and 3 i put the src locally since my imagekit is already at the limit for processing more videos
 export const videoData = [
     {
-        id: 0,
-        name: "Jatim Slander",
-        src: "https://ik.imagekit.io/kanjoed02/MusicVideo/jatimslander.mp4",
-        cover: "https://ik.imagekit.io/kanjoed02/Cover/jatim.png",
-        artist: "Gus Miftah"
-    },
-
-    {
-        id: 1,
-        name: "Bus Antar Provinsi Bangers",
-        src: "https://ik.imagekit.io/kanjoed02/MusicVideo/busantarprovinsiost.mp4",
-        cover: "https://ik.imagekit.io/kanjoed02/Cover/busantarprovinsiost.png",
-        artist: "DJ Ohim"
-    },
-    {
         id: 2,
         name: "アンコール",
         src: yoisabi1,

@@ -7,7 +7,7 @@ router.get("/albums", async (req, res) => {
     try{
         console.log("Fetching albums...");
         const albums = await Album.find({});
-        console.log("Found albums:", albums);
+        console.log("Found albums");
         res.status(200).json(albums);
     }
     catch(err){

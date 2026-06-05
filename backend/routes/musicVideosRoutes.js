@@ -6,6 +6,7 @@ const router = express.Router();
 router.get("/musicVideos", async (req, res) => {
     try{
         const musicVideos = await MusicVideos.find({}, {_id: 0, __v: 0});
+        console.log("Found videos");
         res.status(200).json(musicVideos);
     }
     catch(err){

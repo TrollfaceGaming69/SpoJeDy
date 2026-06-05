@@ -11,6 +11,7 @@ const navigate = useRouter();
 const profileImage = ref(null);
 const fileInput = ref(null);
 const songs = ref([]);
+const username = ref('');
 
 const triggerFileInput = () => {
     fileInput.value.click();
@@ -24,6 +25,11 @@ const handleFileChange = (event) => {
 };
 
 onMounted(async () => {
+    const savedUsername = localStorage.getItem('username');
+    if (savedUsername) {
+        username.value = savedUsername;
+    }
+    
     const fetchedSongs = await apiService.getSongs();
     if (fetchedSongs.length > 0) {
         songs.value = fetchedSongs;
@@ -49,7 +55,7 @@ onMounted(async () => {
             >
             <div>
                 <p class="">Profile</p>
-                <h1 class="text-7xl font-bold">User Name</h1>
+                <h1 class="text-7xl font-bold">{{ username }}</h1>
             </div>
         </div>
 

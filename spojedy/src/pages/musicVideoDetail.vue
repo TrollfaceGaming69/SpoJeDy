@@ -21,6 +21,7 @@ onMounted(async () => {
 });
 
 const togglePlayPause = () => {
+  if (!videoElement.value) return;
   if (isPlaying.value) {
     videoElement.value.pause();
     isPlaying.value = false;
@@ -38,14 +39,19 @@ const formatTime = (time) => {
 };
 
 const onTimeUpdate = () => {
-  currentTime.value = videoElement.value.currentTime;
+  if (videoElement.value) {
+    currentTime.value = videoElement.value.currentTime;
+  }
 };
 
 const onLoadedMetadata = () => {
-  duration.value = videoElement.value.duration;
+  if (videoElement.value) {
+    duration.value = videoElement.value.duration;
+  }
 };
 
 const onProgressClick = (event) => {
+  if (!videoElement.value) return;
   const progressBar = event.currentTarget;
   const rect = progressBar.getBoundingClientRect();
   const percent = (event.clientX - rect.left) / rect.width;
@@ -62,8 +68,10 @@ const playNextVideo = () => {
   selectedVideo.value = videoData[nextId];
   navigate.push({ name: 'videodetail', params: { id: nextId } });
   setTimeout(() => {
-    videoElement.value.play();
-    isPlaying.value = true;
+    if (videoElement.value) {
+      videoElement.value.play();
+      isPlaying.value = true;
+    }
   }, 100);
 };
 
@@ -73,8 +81,10 @@ const playPreviousVideo = () => {
   selectedVideo.value = videoData[previousId];
   navigate.push({ name: 'videodetail', params: { id: previousId } });
   setTimeout(() => {
-    videoElement.value.play();
-    isPlaying.value = true;
+    if (videoElement.value) {
+      videoElement.value.play();
+      isPlaying.value = true;
+    }
   }, 100);
 };
 
