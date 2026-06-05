@@ -1,11 +1,12 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
-import { videoData, assets } from '@/assets/assets';
-import { ref, onMounted } from 'vue';
+import { assets } from '@/assets/assets';
+import { ref, onMounted, watch } from 'vue';
 import { apiService } from '@/api/apiService';
 
-const { id } = useRoute().params;
-const selectedVideo = ref(videoData[id] || videoData[0]);
+const route = useRoute();
+const { id } = route.params;
+const selectedVideo = ref(null);
 const navigate = useRouter();
 
 const isPlaying = ref(false);
@@ -13,10 +14,33 @@ const currentTime = ref(0);
 const duration = ref(0);
 const videoElement = ref(null);
 
-onMounted(async () => {
-  const fetchedVideo = await apiService.getMusicVideoById(id);
+const loadVideo = async (videoId) => {
+  console.log('Fetching video with ID:', videoId);
+  const fetchedVideo = await apiService.getMusicVideoById(videoId);
+  console.log('Fetched video:', fetchedVideo);
   if (fetchedVideo) {
     selectedVideo.value = fetchedVideo;
+    currentTime.value = 0;
+    duration.value = 0;
+  }
+};
+
+onMounted(() => {
+  loadVideo(id);
+});
+
+watch(() => route.params.id, (newId) => {
+  if (newId) {
+    loadVideo(newId);
+  }
+});
+
+watch(() => selectedVideo.value, () => {
+  // Reset playback when video changes
+  if (videoElement.value && isPlaying.value) {
+    setTimeout(() => {
+      videoElement.value?.play();
+    }, 100);
   }
 });
 
@@ -63,29 +87,18 @@ const getProgressPercentage = () => {
 };
 
 const playNextVideo = () => {
-  const currentId = parseInt(selectedVideo.value.id);
-  const nextId = (currentId + 1) % videoData.length;
-  selectedVideo.value = videoData[nextId];
+  if (!selectedVideo.value) return;
+  const nextId = parseInt(selectedVideo.value.id) + 1;
+  isPlaying.value = false;
   navigate.push({ name: 'videodetail', params: { id: nextId } });
-  setTimeout(() => {
-    if (videoElement.value) {
-      videoElement.value.play();
-      isPlaying.value = true;
-    }
-  }, 100);
 };
 
 const playPreviousVideo = () => {
-  const currentId = parseInt(selectedVideo.value.id);
-  const previousId = (currentId - 1 + videoData.length) % videoData.length;
-  selectedVideo.value = videoData[previousId];
+  if (!selectedVideo.value) return;
+  const previousId = parseInt(selectedVideo.value.id) - 1;
+  if (previousId < 0) return;
+  isPlaying.value = false;
   navigate.push({ name: 'videodetail', params: { id: previousId } });
-  setTimeout(() => {
-    if (videoElement.value) {
-      videoElement.value.play();
-      isPlaying.value = true;
-    }
-  }, 100);
 };
 
 </script>
@@ -97,9 +110,9 @@ const playPreviousVideo = () => {
       <img class="w-8 bg-black p-2 rounded-2xl cursor-pointer" :src="assets.arrow_right" @click="navigate.go(1)">
     </div>
 
-    <div class="relative w-full max-w-7xl mx-auto overflow-hidden bg-black rounded-lg group">
+    <div v-if="selectedVideo" class="relative w-full max-w-7xl mx-auto overflow-hidden bg-black rounded-lg group">
 
-      <video ref="videoElement" class="w-full block cursor-pointer" :src="selectedVideo.src" @click="togglePlayPause"
+      <video ref="videoElement" class="w-full block cursor-pointer" :src="selectedVideo.src || selectedVideo.videoUrl" @click="togglePlayPause"
         @timeupdate="onTimeUpdate" @loadedmetadata="onLoadedMetadata" @ended="playNextVideo"></video>
 
       <div
@@ -121,7 +134,11 @@ const playPreviousVideo = () => {
       </div>
     </div>
 
-    <div class="mt-6">
+    <div v-else class="text-center py-8">
+      <p class="text-gray-400">Loading video...</p>
+    </div>
+
+    <div v-if="selectedVideo" class="mt-6">
       <p class="text-2xl">{{ selectedVideo.name }}</p>
       <p class="text-gray-400">{{ selectedVideo.artist }}</p>
     </div>

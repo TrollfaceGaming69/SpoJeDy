@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import MusicVideoItem from '@/component/musicVideoItem.vue';
-import { assets, videoData } from '@/assets/assets';
+import { assets} from '@/assets/assets';
 import SongItem from '@/component/songItem.vue';
 import { useRouter } from 'vue-router';
 import { apiService } from '@/api/apiService';
@@ -11,6 +11,7 @@ const navigate = useRouter();
 const profileImage = ref(null);
 const fileInput = ref(null);
 const songs = ref([]);
+const videos = ref([]);
 const username = ref('');
 
 const triggerFileInput = () => {
@@ -33,6 +34,11 @@ onMounted(async () => {
     const fetchedSongs = await apiService.getSongs();
     if (fetchedSongs.length > 0) {
         songs.value = fetchedSongs;
+    }
+
+    const fetchedVideos = await apiService.getMusicVideos();
+    if (fetchedVideos.length > 0) {
+        videos.value = fetchedVideos;
     }
 });
 </script>
@@ -81,7 +87,7 @@ onMounted(async () => {
             <div>
                 <h1 class="my-5 font-bold text-2xl">Top music videos</h1>
                 <div class="flex overflow-auto">
-                    <MusicVideoItem v-for="video in videoData" :key="video.id" :id="video.id" :name="video.name" :artist="video.artist" :cover="video.cover"/>
+                    <MusicVideoItem v-for="video in videos" :key="video.id" :id="video.id" :name="video.name" :artist="video.artist" :cover="video.cover"/>
                 </div>
             </div>
         </div>

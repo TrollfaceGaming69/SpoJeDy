@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
+import { assets } from '@/assets/assets';
 
 const navigate = useRouter();
 const isLoggedIn = ref(false);
@@ -18,6 +19,12 @@ const goToProfile = () => {
 
 const goToLogin = () => {
     navigate.push({ name: "login" });
+};
+
+const logout = () => {
+    localStorage.removeItem('token');
+    isLoggedIn.value = false;
+    navigate.push({ name: "home" });
 };
 </script>
 
@@ -40,6 +47,7 @@ const goToLogin = () => {
         </div>
 
         <div class="flex items-center gap-4">
+            <img v-if="isLoggedIn" :src="assets.logout" alt="" class="w-10 cursor-pointer" @click="logout">
              <p v-if="!isLoggedIn" class="bg-white text-black text-[15px] px-4 py-1 rounded-2xl hidden md:block cursor-pointer" @click="goToLogin">Login</p>
 
             <img v-if="isLoggedIn" class="w-7 h-7 rounded-full cursor-pointer" src="" alt="" @click="goToProfile">

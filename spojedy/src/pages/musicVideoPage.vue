@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { assets, videoData } from '@/assets/assets';
+import { assets} from '@/assets/assets';
 import { apiService } from '@/api/apiService';
 import MusicVideoItem from '@/component/musicVideoItem.vue';
 

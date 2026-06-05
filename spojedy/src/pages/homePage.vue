@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { assets, videoData } from '@/assets/assets';
+import { assets} from '@/assets/assets';
 import { useRouter } from 'vue-router';
 import { apiService } from '@/api/apiService';
 import AlbumItem from '@/component/albumItem.vue';
@@ -11,7 +11,7 @@ const navigate = useRouter();
 
 const albums = ref([]);
 const songs = ref([]);
-const videos = ref(videoData);
+const videos = ref([]);
 
 onMounted(async () => {
   const fetchedAlbums = await apiService.getAlbums();

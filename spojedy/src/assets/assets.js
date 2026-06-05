@@ -22,10 +22,9 @@ import arrow_right from '../assets/icon/right_arrow.png'
 import arrow_left from '../assets/icon/left_arrow.png'
 import spotify_logo from '../assets/icon/spotify_logo.png'
 import clock_icon from '../assets/icon/clock_icon.png'
-import yoisabi1 from "../assets/videos/yoisabi1.mp4"
-import yoisabi2 from "../assets/videos/yoisabi2.mp4"
 import loop_active from "../assets/icon/loop_active.png"
 import eye from "../assets/icon/eye.png"
+import logout from "../assets/icon/logout.png"
 
 export const assets = {
     bell_icon,
@@ -53,23 +52,6 @@ export const assets = {
     clock_icon,
     spotify_logo,
     loop_active,
-    eye
+    eye,
+    logout
 }
-
-//for video id 2 and 3 i put the src locally since my imagekit is already at the limit for processing more videos
-export const videoData = [
-    {
-        id: 2,
-        name: "アンコール",
-        src: yoisabi1,
-        cover: "https://ik.imagekit.io/kanjoed02/Cover/YoisabiCover1.png",
-        artist: "YOASOBI"
-    },
-    {
-        id: 3,
-        name: "ハルカ",
-        src: yoisabi2,
-        cover: "https://ik.imagekit.io/kanjoed02/Cover/YoisabiCover2.png",
-        artist: "YOASOBI"
-    }
-]
