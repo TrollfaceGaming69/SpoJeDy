@@ -1,14 +1,16 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import MusicVideoItem from '@/component/musicVideoItem.vue';
-import { musicData, assets, videoData } from '@/assets/assets';
+import { assets, videoData } from '@/assets/assets';
 import SongItem from '@/component/songItem.vue';
 import { useRouter } from 'vue-router';
+import { apiService } from '@/api/apiService';
 
 const navigate = useRouter();
 
 const profileImage = ref(null);
 const fileInput = ref(null);
+const songs = ref([]);
 
 const triggerFileInput = () => {
     fileInput.value.click();
@@ -20,6 +22,13 @@ const handleFileChange = (event) => {
         profileImage.value = URL.createObjectURL(file);
     }
 };
+
+onMounted(async () => {
+    const fetchedSongs = await apiService.getSongs();
+    if (fetchedSongs.length > 0) {
+        songs.value = fetchedSongs;
+    }
+});
 </script>
 
 <template>
@@ -59,7 +68,7 @@ const handleFileChange = (event) => {
             <div>
                 <h1 class="my-5 font-bold text-2xl">Top tracks</h1>
                 <div class="flex overflow-auto">
-                    <SongItem v-for="song in musicData" :key="song.id" :id="song.id" :cover="song.cover" :name="song.name" :artist="song.artist"/>
+                    <SongItem v-for="song in songs" :key="song.id" :id="song.id" :cover="song.cover" :name="song.name" :artist="song.artist"/>
                 </div>
             </div>
 

@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose"
+import mongoose from "mongoose"
 
 const songSchema = new mongoose.Schema({
     id: Number,
@@ -9,4 +9,4 @@ const songSchema = new mongoose.Schema({
     duration: String,
 });
 
-export default mongoose.model("Song", songSchema);
+export default mongoose.model("Song", songSchema, "songs");

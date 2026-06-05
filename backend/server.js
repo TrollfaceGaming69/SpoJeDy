@@ -1,20 +1,20 @@
+import dotenv from "dotenv"
 import express from "express"
 import mongoose from "mongoose"
 import cors from "cors"
-import mongoSanitize from "express-mongo-sanitize"
 
-import registerRoute from "./routes/register"
-import loginRoute from "./routes/login"
+dotenv.config()
 
-import albumsRoute from "./routes/albumsRoute"
-import songsRoute from "./routes/songsRoute"
-import musicVideosRoute from "./routes/musicVideosRoutes"
+import registerRoute from "./routes/register.js"
+import loginRoute from "./routes/login.js"
+
+import albumsRoute from "./routes/albumsRoute.js"
+import songsRoute from "./routes/songsRoute.js"
+import musicVideosRoute from "./routes/musicVideosRoutes.js"
 
 const app = express()
 app.use(cors({origin: "http://localhost:5173"}))
 app.use(express.json())
-app.use(mongoSanitize());
-
 
 await mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connected to MongoDB Atlas'))

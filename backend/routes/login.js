@@ -1,7 +1,7 @@
 import express from "express"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import User from "../models/users"
+import User from "../models/users.js"
 import ratelimit from "express-rate-limit"
 
 const router = express.Router();

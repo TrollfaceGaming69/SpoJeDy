@@ -10,7 +10,6 @@ import SideBar from '@/component/sideBar.vue';
             <SideBar/>
             <router-view />
         </div>
-        
-        <audio src="" preload="auto"></audio>
+
     </div>
 </template>

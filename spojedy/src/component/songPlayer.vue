@@ -1,8 +1,8 @@
 <script setup>
-import { assets, musicData } from '@/assets/assets';
+import { assets } from '@/assets/assets';
 import { ref } from 'vue';
 
-const selectedSong = ref(musicData[0])
+const selectedSong = ref({})
 
 </script>
 

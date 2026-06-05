@@ -1,5 +1,5 @@
 import express from "express"
-import User from "../models/users"
+import User from "../models/users.js"
 import ratelimit from "express-rate-limit"
 
 const router = express.Router();
@@ -15,7 +15,7 @@ const registerLimiter = ratelimit({
 
 router.post("/register", registerLimiter, async(requestAnimationFrame, res) => {
     const {username, email, password} = req.body;
-
+    
     try{
         const existingUser = await User.findOne({email});
         if(existingUser){

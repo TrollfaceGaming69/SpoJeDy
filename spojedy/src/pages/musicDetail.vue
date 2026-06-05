@@ -1,11 +1,12 @@
 <script setup>
-import { musicData, assets } from '@/assets/assets';
+import { assets } from '@/assets/assets';
 import { ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { apiService } from '@/api/apiService';
 
 const {id} = useRoute().params;
-const selectedSong = ref(musicData[id] || musicData[0]);
+const selectedSong = ref({});
+const allSongs = ref([]);
 const navigate = useRouter();
 
 const isPlaying = ref(false);
@@ -18,6 +19,12 @@ onMounted(async () => {
   const fetchedSong = await apiService.getSongById(id);
   if (fetchedSong) {
     selectedSong.value = fetchedSong;
+  }
+  
+  // Fetch all songs for next/previous navigation
+  const songs = await apiService.getSongs();
+  if (songs.length > 0) {
+    allSongs.value = songs;
   }
 });
 
@@ -58,17 +65,21 @@ const getProgressPercentage = () => {
 };
 
 const playNextSong = () => {
-  const currentId = parseInt(selectedSong.value.id);
-  const nextId = (currentId + 1) % musicData.length;
-  selectedSong.value = musicData[nextId];
-  navigate.push({ name: 'musicdetail', params: { id: nextId } });
+  if (allSongs.value.length === 0) return;
+  const currentIndex = allSongs.value.findIndex(song => song.id === selectedSong.value.id);
+  const nextIndex = (currentIndex + 1) % allSongs.value.length;
+  const nextSong = allSongs.value[nextIndex];
+  selectedSong.value = nextSong;
+  navigate.push({ name: 'musicdetail', params: { id: nextSong.id } });
 };
 
 const playPreviousSong = () => {
-  const currentId = parseInt(selectedSong.value.id);
-  const previousId = (currentId - 1 + musicData.length) % musicData.length;
-  selectedSong.value = musicData[previousId];
-  navigate.push({ name: 'musicdetail', params: { id: previousId } });
+  if (allSongs.value.length === 0) return;
+  const currentIndex = allSongs.value.findIndex(song => song.id === selectedSong.value.id);
+  const previousIndex = (currentIndex - 1 + allSongs.value.length) % allSongs.value.length;
+  const previousSong = allSongs.value[previousIndex];
+  selectedSong.value = previousSong;
+  navigate.push({ name: 'musicdetail', params: { id: previousSong.id } });
 };
 
 const toggleLoop = () => {

@@ -1,5 +1,5 @@
 import express from "express"
-import MusicVideos from "../models/musicVideos"
+import MusicVideos from "../models/musicVideos.js"
 
 const router = express.Router();
 

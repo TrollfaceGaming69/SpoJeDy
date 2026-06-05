@@ -15,96 +15,96 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      name: "home",
       component: Display,
       meta: { requiresAuth: false },
       children: [
         {
           path: "",
+          name: "home",
           component: HomePage
         }
       ]
     },
     {
       path: "/album/:id",
-      name: "albumdetail",
       component: Display,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: false },
       children: [
         {
           path: "",
+          name: "albumdetail",
           component: displayAlbum
         }
       ]
     },
     {
       path: "/music/:id",
-      name: "musicdetail",
       component: Display,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: false },
       children: [
         {
           path: "",
+          name: "musicdetail",
           component: MusicDetail
         }
       ]
     },
     {
       path: "/musicvideo",
-      name: "musicvideo",
       component: Display,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: false },
       children: [
         {
           path: "",
+          name: "musicvideo",
           component: MusicVideoPage
         }
       ]
     },
     {
       path: "/musicvideo/:id",
-      name: "videodetail",
       component: Display,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: false },
       children: [
         {
           path: "",
+          name: "videodetail",
           component: MusicVideoDetail
         }
       ]
     },
     {
       path: "/profile",
-      name: "profile",
       component: Display,
       meta: { requiresAuth: true },
       children: [
         {
           path: "",
+          name: "profile",
           component: Profile
         }
       ]
     },
     {
       path: "/login",
-      name: "login",
       component: AuthLayout,
       meta: { requiresAuth: false },
       children: [
         {
           path: "",
+          name: "login",
           component: LoginPage
         }
       ]
     },
     {
       path: "/register",
-      name: "register",
       component: AuthLayout,
       meta: { requiresAuth: false },
       children: [
         {
           path: "",
+          name: "register",
           component: RegisterPage
         }
       ]
@@ -112,18 +112,14 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
   const isAuthenticated = !!localStorage.getItem('token')
   const requiresAuth = to.meta.requiresAuth
 
   if (requiresAuth && !isAuthenticated) {
-    next({ name: 'login' })
+    return { name: 'login' }
   } else if (!requiresAuth && isAuthenticated && (to.name === 'login' || to.name === 'register')) {
-    next({ name: 'home' })
-  } else if (to.path === '/') {
-    next({ name: 'home' })
-  } else {
-    next()
+    return { name: 'home' }
   }
 })
 

@@ -9,4 +9,4 @@ const albumSchema = new mongoose.Schema({
   songs: [Number],
 });
 
-export default mongoose.model("Album", albumSchema);
+export default mongoose.model("Album", albumSchema, "albums");

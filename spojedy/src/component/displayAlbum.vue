@@ -1,11 +1,11 @@
 <script setup>
-import { albumData, assets, musicData } from '@/assets/assets';
+import { assets } from '@/assets/assets';
 import { useRoute, useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import { apiService } from '@/api/apiService';
 
 const {id} = useRoute().params;
-const albumsData = ref(albumData[id] || {});
+const albumsData = ref({});
 const albumSongs = ref([]);
 
 const navigate = useRouter();
@@ -23,15 +23,8 @@ onMounted(async () => {
     } else {
       albumSongs.value = allSongs;
     }
-  } else {
-    albumSongs.value = getAlbumSongs();
   }
 });
-
-const getAlbumSongs = () => {
-    if (!albumsData.value || !albumsData.value.songs) return [];
-    return musicData.filter(song => albumsData.value.songs.includes(song.id));
-};
 
 const goToMusicDetail = (songId) => {
     navigate.push(`/music/${songId}`);

@@ -8,4 +8,4 @@ const musicVideoSchema = new mongoose.Schema({
     artist: String,
 });
 
-export default mongoose.model("MusicVideos", musicVideoSchema);
+export default mongoose.model("MusicVideos", musicVideoSchema, "musicVideos");
