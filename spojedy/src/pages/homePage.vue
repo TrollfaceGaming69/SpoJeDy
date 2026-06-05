@@ -12,6 +12,7 @@ const navigate = useRouter();
 const albums = ref([]);
 const songs = ref([]);
 const videos = ref([]);
+const activeFilter = ref('all');
 
 onMounted(async () => {
   const fetchedAlbums = await apiService.getAlbums();
@@ -40,12 +41,30 @@ onMounted(async () => {
         </div>
 
         <div class="flex items-center gap-2 mt-4">
-            <p class="bg-white text-black px-4 py-1 rounded-2xl cursor-pointer">All</p>
-            <p class="bg-black px-4 py-1 rounded-2xl cursor-pointer">Music</p>
-            <p class="bg-black px-4 py-1 rounded-2xl cursor-pointer">Music Video</p>
+            <p 
+              @click="activeFilter = 'all'"
+              :class="activeFilter === 'all' ? 'bg-white text-black' : 'bg-black'"
+              class="px-4 py-1 rounded-2xl cursor-pointer transition-colors"
+            >
+              All
+            </p>
+            <p 
+              @click="activeFilter = 'music'"
+              :class="activeFilter === 'music' ? 'bg-white text-black' : 'bg-black text-white'"
+              class="px-4 py-1 rounded-2xl cursor-pointer transition-colors"
+            >
+              Music
+            </p>
+            <p 
+              @click="activeFilter = 'musicVideo'"
+              :class="activeFilter === 'musicVideo' ? 'bg-white text-black' : 'bg-black text-white'"
+              class="px-4 py-1 rounded-2xl cursor-pointer transition-colors"
+            >
+              Music Video
+            </p>
         </div>
 
-        <div class="mb-4">
+        <div v-if="activeFilter === 'all' || activeFilter === 'all'" class="mb-4">
             <h1 class="my-5 font-bold text-2xl">Featured Charts</h1>
             <div class="flex overflow-auto">
                 <AlbumItem v-for="album in albums" :key="album.id" :id="album.id" :cover="album.cover"
@@ -53,7 +72,7 @@ onMounted(async () => {
             </div>
         </div>
 
-        <div class="mb-4">
+        <div v-if="activeFilter === 'all' || activeFilter === 'music'" class="mb-4">
             <h1 class="my-5 font-bold text-2xl">This Month Hits</h1>
             <div class="flex overflow-auto">
                 <SongItem v-for="song in songs" :key="song.id" :id="song.id" :cover="song.cover" :name="song.name"
@@ -61,7 +80,7 @@ onMounted(async () => {
             </div>
         </div>
 
-        <div class="mb-4">
+        <div v-if="activeFilter === 'all' || activeFilter === 'musicVideo'" class="mb-4">
             <h1 class="my-5 font-bold text-2xl">MV to Smooth Your Brain</h1>
             <div class="flex overflow-auto">
                 <MusicVideoItem v-for="video in videos" :key="video.id" :id="video.id" :name="video.name" :artist="video.artist" :cover="video.cover"/>
