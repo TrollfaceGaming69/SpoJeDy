@@ -9,7 +9,7 @@ const router = useRouter()
 </script>
 
 <template>
-      <div class="h-screen bg-black">
+      <div class="h-screen">
         <Navbar/>
         <div class="h-[90%] flex">
             <SideBar/>
@@ -21,3 +21,20 @@ const router = useRouter()
 </template>
 
 
+<style>
+:root {
+  --bg-color: #121212;
+  --text-color: #ffffff;    
+  --card-bg: #1e1e1e;
+
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s ease;
+}
+
+:root.light {
+  --bg-color: #f0f0f0;
+  --text-color: #000000;    
+  --card-bg: #ffffff;
+}
+</style>

@@ -2,6 +2,7 @@
 import { musicData, assets } from '@/assets/assets';
 import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import {vueFullscreen} from 'vue-fullscreen';
 
 const {id} = useRoute().params;
 const selectedSong = ref(musicData[id] || musicData[0]);
@@ -12,6 +13,9 @@ const currentTime = ref(0);
 const duration = ref(0);
 const audioElement = ref(null);
 const isLooping = ref(false);
+const containerRef = ref(null);
+const volume = ref(1);
+
 
 const togglePlayPause = () => {
   if (isPlaying.value) {
@@ -84,10 +88,43 @@ watch(selectedSong, () => {
   }
 });
 
+
+const toggleFullscreen = async () => {
+  if (!document.fullscreenElement) {
+    try {
+      await containerRef.value.requestFullscreen();
+    } catch (err) {
+      console.error('Error enabling fullscreen : ${err.message}');
+    }
+  } else {
+    document.value.exitFullscreen();
+  }
+};
+
+
+const changeVolume = (event) => {
+  const newVolume = parseFloat(event.target.value);
+  volume.value = newVolume;
+  if (audioElement.value.volume > 0) {
+    audioElement.value.volume = newVolume;
+    audioElement.value.muted = newVolume == 0;
+  }
+};
+
+const toggleVolume = () => {
+  if (!audioElement.value.volume > 0) {
+    audioElement.value.volume = 1;
+    volume.value = 1;
+  } else {
+    audioElement.value.volume = 0;
+    volume.value = 0;
+  }
+};
+
 </script>
 
 <template>
-    <div class="w-full m-2 px-6 rounded bg-[#121212] text-white overflow-auto lg:w-[75%] lg:ml-0">
+    <div ref="containerRef" class="w-full m-2 px-6 rounded bg-[#121212] text-white overflow-auto lg:w-[75%] lg:ml-0">
         <audio ref="audioElement" @timeupdate="onTimeUpdate" @loadedmetadata="onLoadedMetadata" @ended="handleSongEnd">
             <source :src="selectedSong.src" type="audio/mpeg">
         </audio>
@@ -99,7 +136,7 @@ watch(selectedSong, () => {
 
         <div class="flex flex-col items-center gap-6 text-center mt-50">
             <div>
-                <img class="w-120 rounded-2xl" :src="selectedSong.cover" alt="">
+                <img class="w-120 rounded-2xl" :src="selectedSong.cover" alt="" @click="toggleFullscreen">
             </div>
 
             <div>
@@ -112,6 +149,11 @@ watch(selectedSong, () => {
                 <img class="w-6 cursor-pointer" :src="assets.prev_icon" alt="" @click="playPreviousSong">
                 <img class="w-6 cursor-pointer" :src="isPlaying ? assets.pause_icon : assets.play_icon" alt="" @click="togglePlayPause">
                 <img class="w-6 cursor-pointer" :src="assets.next_icon" alt="" @click="playNextSong">
+                <div class="flex items-center gap-4">
+                <img class="w-6 cursor-pointer" :src="volume === 0 ? assets.mute_icon : assets.volume_icon" alt="Volume" @click="toggleVolume">
+                    <input type="range" min="0" max="1" step="0.02" :value="volume" @input="changeVolume"
+                    class="w-24 cursor-pointer"/>
+                </div>
                 <img class="w-6 cursor-pointer" :src="isLooping ? assets.loop_active : assets.loop_icon" alt="" @click="toggleLoop">
             </div>
 
