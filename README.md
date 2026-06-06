@@ -38,10 +38,6 @@ npm install
 ```sh
 MONGO_URI=mongodb+srv://<namaUser>:<password>@spojedycluster.ywus1cc.mongodb.net/?appName=<AppName>
 (ganti <namaUser> <passowrd> dan <AppName>)
-
-MONGO_URI=mongodb+srv://santoso:sotoayampaksupardi@spojedycluster.ywus1cc.mongodb.net/spojedy?appName=SpojedyCluster
-JWT_SECRET=your_super_secret_key
-
 ```
 
 ## Tutor Jalanin
