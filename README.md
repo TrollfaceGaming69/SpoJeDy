@@ -36,7 +36,7 @@ npm install
 ### Tambah Mongo URI di .env
 
 ```sh
-MONGO_URI=mongodb+srv://<namaUser>:<password>@spojedycluster.ywus1cc.mongodb.net/?appName=<AppName>
+MONGO_URI=mongodb://<namaUser>:<password>@ac-jqcujoo-shard-00-00.ywus1cc.mongodb.net:27017,ac-jqcujoo-shard-00-01.ywus1cc.mongodb.net:27017,ac-jqcujoo-shard-00-02.ywus1cc.mongodb.net:27017/?ssl=true&replicaSet=atlas-2m0d14-shard-0&authSource=admin&appName=<AppName>
 (ganti <namaUser> <passowrd> dan <AppName>)
 ```
 
