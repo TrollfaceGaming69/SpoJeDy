@@ -4,7 +4,7 @@ import { ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { apiService } from '@/api/apiService';
 
-const {id} = useRoute().params;
+const route = useRoute();
 const selectedSong = ref({});
 const allSongs = ref([]);
 const navigate = useRouter();
@@ -15,16 +15,26 @@ const duration = ref(0);
 const audioElement = ref(null);
 const isLooping = ref(false);
 
-onMounted(async () => {
-  const fetchedSong = await apiService.getSongById(id);
+const loadSong = async (songId) => {
+  const fetchedSong = await apiService.getSongById(songId);
   if (fetchedSong) {
     selectedSong.value = fetchedSong;
   }
+};
+
+onMounted(async () => {
+  await loadSong(route.params.id);
   
   // Fetch all songs for next/previous navigation
   const songs = await apiService.getSongs();
   if (songs.length > 0) {
     allSongs.value = songs;
+  }
+});
+
+watch(() => route.params.id, (newId) => {
+  if (newId) {
+    loadSong(newId);
   }
 });
 

@@ -1,15 +1,92 @@
 <script setup>
 import { useRouter } from 'vue-router';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { assets } from '@/assets/assets';
+import { apiService } from '@/api/apiService';
 
 const navigate = useRouter();
 const isLoggedIn = ref(false);
 
-onMounted(() => {
+const searchQuery = ref('');
+const isFocused = ref(false);
+const songs = ref([]);
+const albums = ref([]);
+const musicVideos = ref([]);
+
+onMounted(async () => {
     const token = localStorage.getItem('token');
     isLoggedIn.value = !!token;
+
+    try {
+        const [fetchedSongs, fetchedAlbums, fetchedVideos] = await Promise.all([
+            apiService.getSongs(),
+            apiService.getAlbums(),
+            apiService.getMusicVideos()
+        ]);
+        songs.value = fetchedSongs || [];
+        albums.value = fetchedAlbums || [];
+        musicVideos.value = fetchedVideos || [];
+    } catch (error) {
+        console.error('Error fetching search data:', error);
+    }
 });
+
+const filteredResults = computed(() => {
+    const query = searchQuery.value.trim().toLowerCase();
+    if (!query) return [];
+
+    const results = [];
+
+    songs.value.forEach(song => {
+        if (song.name.toLowerCase().includes(query) || (song.artist && song.artist.toLowerCase().includes(query))) {
+            results.push({
+                ...song,
+                type: 'song',
+                typeLabel: 'Song'
+            });
+        }
+    });
+
+    albums.value.forEach(album => {
+        if (album.name.toLowerCase().includes(query) || (album.artist && album.artist.toLowerCase().includes(query))) {
+            results.push({
+                ...album,
+                type: 'album',
+                typeLabel: 'Album'
+            });
+        }
+    });
+
+    musicVideos.value.forEach(video => {
+        if (video.name.toLowerCase().includes(query) || (video.artist && video.artist.toLowerCase().includes(query))) {
+            results.push({
+                ...video,
+                type: 'video',
+                typeLabel: 'Music Video'
+            });
+        }
+    });
+
+    return results;
+});
+
+const handleBlur = () => {
+    setTimeout(() => {
+        isFocused.value = false;
+    }, 200);
+};
+
+const selectItem = (item) => {
+    searchQuery.value = '';
+    isFocused.value = false;
+    if (item.type === 'song') {
+        navigate.push({ name: 'musicdetail', params: { id: item.id } });
+    } else if (item.type === 'album') {
+        navigate.push({ name: 'albumdetail', params: { id: item.id } });
+    } else if (item.type === 'video') {
+        navigate.push({ name: 'videodetail', params: { id: item.id } });
+    }
+};
 
 const goToProfile = () => {
     if (isLoggedIn.value) {
@@ -34,6 +111,9 @@ const logout = () => {
 
         <div class="relative w-full max-w-md">
             <input
+                v-model="searchQuery"
+                @focus="isFocused = true"
+                @blur="handleBlur"
                 class="w-full rounded-full bg-[#121212] text-white placeholder:text-zinc-400 p-3 pl-6 pr-16 focus:outline-none border border-transparent focus:border-zinc-700"
                 type="text" placeholder="What do you want to play?">
 
@@ -43,6 +123,20 @@ const logout = () => {
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.602 10.602Z" />
                 </svg>
+            </div>
+
+            <!-- Search Results Overlay -->
+            <div v-if="isFocused && searchQuery.trim() !== ''" class="absolute top-full left-0 right-0 mt-2 bg-[#121212] border border-zinc-700 rounded-lg max-h-80 overflow-y-auto z-50 shadow-2xl p-2">
+                <div v-if="filteredResults.length === 0" class="p-3 text-center text-zinc-400 text-sm">
+                    No results found
+                </div>
+                <div v-else v-for="item in filteredResults" :key="item.type + '-' + item.id" @click="selectItem(item)" class="flex items-center gap-3 p-2 rounded cursor-pointer hover:bg-[#ffffff26] transition-colors">
+                    <img :src="item.cover" alt="" class="w-10 h-10 rounded object-cover flex-shrink-0">
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-sm text-white truncate">{{ item.name }}</p>
+                        <p class="text-zinc-400 text-xs truncate">{{ item.artist }} • {{ item.typeLabel }}</p>
+                    </div>
+                </div>
             </div>
         </div>
 

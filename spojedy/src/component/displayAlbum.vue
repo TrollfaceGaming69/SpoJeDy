@@ -1,17 +1,17 @@
 <script setup>
 import { assets } from '@/assets/assets';
 import { useRoute, useRouter } from 'vue-router';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { apiService } from '@/api/apiService';
 
-const {id} = useRoute().params;
+const route = useRoute();
 const albumsData = ref({});
 const albumSongs = ref([]);
 
 const navigate = useRouter();
 
-onMounted(async () => {
-  const fetchedAlbum = await apiService.getAlbumById(id);
+const loadAlbum = async (albumId) => {
+  const fetchedAlbum = await apiService.getAlbumById(albumId);
   if (fetchedAlbum) {
     albumsData.value = fetchedAlbum;
   }
@@ -23,6 +23,16 @@ onMounted(async () => {
     } else {
       albumSongs.value = allSongs;
     }
+  }
+};
+
+onMounted(() => {
+  loadAlbum(route.params.id);
+});
+
+watch(() => route.params.id, (newId) => {
+  if (newId) {
+    loadAlbum(newId);
   }
 });
 
