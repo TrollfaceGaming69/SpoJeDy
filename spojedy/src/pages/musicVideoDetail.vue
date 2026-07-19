@@ -19,7 +19,13 @@ const loadVideo = async (videoId) => {
   const fetchedVideo = await apiService.getMusicVideoById(videoId);
   console.log('Fetched video:', fetchedVideo);
   if (fetchedVideo) {
-    selectedVideo.value = fetchedVideo;
+    const normalizedVideo = {
+      ...fetchedVideo,
+      src: typeof fetchedVideo.src === 'string' ? fetchedVideo.src.trim() : fetchedVideo.src,
+      cover: typeof fetchedVideo.cover === 'string' ? fetchedVideo.cover.trim() : fetchedVideo.cover,
+    };
+
+    selectedVideo.value = normalizedVideo;
     currentTime.value = 0;
     duration.value = 0;
   }
@@ -36,7 +42,6 @@ watch(() => route.params.id, (newId) => {
 });
 
 watch(() => selectedVideo.value, () => {
-  // Reset playback when video changes
   if (videoElement.value && isPlaying.value) {
     setTimeout(() => {
       videoElement.value?.play();
@@ -44,14 +49,19 @@ watch(() => selectedVideo.value, () => {
   }
 });
 
-const togglePlayPause = () => {
+const togglePlayPause = async () => {
   if (!videoElement.value) return;
   if (isPlaying.value) {
     videoElement.value.pause();
     isPlaying.value = false;
   } else {
-    videoElement.value.play();
-    isPlaying.value = true;
+    try {
+      await videoElement.value.play();
+      isPlaying.value = true;
+    } catch (error) {
+      console.warn('Video play failed:', error);
+      isPlaying.value = false;
+    }
   }
 };
 

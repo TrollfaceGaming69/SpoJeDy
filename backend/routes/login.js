@@ -38,7 +38,7 @@ router.post("/login", loginLimiter ,async (req, res) => {
             {expiresIn: "7d"}
         );
 
-        res.status(200).json({message: "Login successful", token, username: user.username});
+        res.status(200).json({message: "Login successful", token, username: user.username, profilePicture: user.profilePicture || ""});
     }
     catch(err){
         res.status(500).json({message: "Server error", error: err.message});

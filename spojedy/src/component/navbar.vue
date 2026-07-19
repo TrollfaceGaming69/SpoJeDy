@@ -1,11 +1,12 @@
 <script setup>
 import { useRouter } from 'vue-router';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { assets } from '@/assets/assets';
 import { apiService } from '@/api/apiService';
 
 const navigate = useRouter();
 const isLoggedIn = ref(false);
+const profilePicture = ref('');
 
 const searchQuery = ref('');
 const isFocused = ref(false);
@@ -13,9 +14,26 @@ const songs = ref([]);
 const albums = ref([]);
 const musicVideos = ref([]);
 
+const onProfileUpdated = (event) => {
+    if (event.detail && event.detail.profilePicture) {
+        profilePicture.value = event.detail.profilePicture;
+    }
+};
+
 onMounted(async () => {
     const token = localStorage.getItem('token');
     isLoggedIn.value = !!token;
+
+    // Fetch profile picture if logged in
+    if (isLoggedIn.value) {
+        const profile = await apiService.getProfile();
+        if (profile && profile.profilePicture) {
+            profilePicture.value = profile.profilePicture;
+        }
+    }
+
+    // Listen for profile updates from the profile page
+    window.addEventListener('profile-updated', onProfileUpdated);
 
     try {
         const [fetchedSongs, fetchedAlbums, fetchedVideos] = await Promise.all([
@@ -29,6 +47,10 @@ onMounted(async () => {
     } catch (error) {
         console.error('Error fetching search data:', error);
     }
+});
+
+onUnmounted(() => {
+    window.removeEventListener('profile-updated', onProfileUpdated);
 });
 
 const filteredResults = computed(() => {
@@ -100,6 +122,9 @@ const goToLogin = () => {
 
 const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('profilePicture');
+    profilePicture.value = '';
     isLoggedIn.value = false;
     navigate.push({ name: "home" });
 };
@@ -125,7 +150,6 @@ const logout = () => {
                 </svg>
             </div>
 
-            <!-- Search Results Overlay -->
             <div v-if="isFocused && searchQuery.trim() !== ''" class="absolute top-full left-0 right-0 mt-2 bg-[#121212] border border-zinc-700 rounded-lg max-h-80 overflow-y-auto z-50 shadow-2xl p-2">
                 <div v-if="filteredResults.length === 0" class="p-3 text-center text-zinc-400 text-sm">
                     No results found
@@ -144,7 +168,22 @@ const logout = () => {
             <img v-if="isLoggedIn" :src="assets.logout" alt="" class="w-10 cursor-pointer" @click="logout">
              <p v-if="!isLoggedIn" class="bg-white text-black text-[15px] px-4 py-1 rounded-2xl hidden md:block cursor-pointer" @click="goToLogin">Login</p>
 
-            <img v-if="isLoggedIn" class="w-7 h-7 rounded-full cursor-pointer" src="" alt="" @click="goToProfile">
+            <img 
+                v-if="isLoggedIn && profilePicture" 
+                class="w-7 h-7 rounded-full cursor-pointer object-cover" 
+                :src="profilePicture" 
+                alt="Profile" 
+                @click="goToProfile"
+            >
+            <div 
+                v-else-if="isLoggedIn" 
+                class="w-7 h-7 rounded-full cursor-pointer bg-[#535353] flex items-center justify-center"
+                @click="goToProfile"
+            >
+                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+            </div>
         </div>
     </div>
 </template>

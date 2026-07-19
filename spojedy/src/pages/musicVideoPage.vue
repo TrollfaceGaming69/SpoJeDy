@@ -6,7 +6,7 @@ import { apiService } from '@/api/apiService';
 import MusicVideoItem from '@/component/musicVideoItem.vue';
 
 const navigate = useRouter();
-const videos = ref(videoData);
+const videos = ref([]);
 
 onMounted(async () => {
   const fetchedVideos = await apiService.getMusicVideos();

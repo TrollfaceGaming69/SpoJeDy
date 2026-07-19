@@ -18,6 +18,14 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    profilePicture: {
+        type: String,
+        default: "",
+    },
+    profilePictureFileId: {
+        type: String,
+        default: "",
+    },
 }, {timestamps: true});
 
 UserSchema.pre("save", async function() {
