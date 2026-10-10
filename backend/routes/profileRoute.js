@@ -128,7 +128,6 @@ router.put(
                 profilePicture: getSignedProfileUrl(user.profilePicture),
             });
         } catch (err) {
-            // Handle Multer file size errors
             if (err.code === "LIMIT_FILE_SIZE") {
                 return res.status(400).json({ message: "File too large. Maximum size is 10 MB." });
             }
@@ -141,7 +140,6 @@ router.put(
     }
 );
 
-// ─── Multer error handler ───────────────────────────────────────────────────────
 router.use((err, req, res, next) => {
     if (err instanceof multer.MulterError) {
         if (err.code === "LIMIT_FILE_SIZE") {

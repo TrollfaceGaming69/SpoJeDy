@@ -1,9 +1,5 @@
 import jwt from "jsonwebtoken"
 
-/**
- * Middleware to verify JWT tokens.
- * Attaches decoded user info (userId, email) to req.user.
- */
 export const verifyToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
 

@@ -3,17 +3,15 @@ import sharp from "sharp"
 import crypto from "crypto"
 import ImageKit, { toFile } from "@imagekit/nodejs"
 
-// ─── ImageKit SDK ───────────────────────────────────────────────────────────────
 export const imagekit = new ImageKit({
     publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
     privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
     urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
 });
 
-// ─── Multer Configuration ───────────────────────────────────────────────────────
 export const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+    limits: { fileSize: 10 * 1024 * 1024 }, 
     fileFilter: (_req, file, cb) => {
         const allowedMimes = [
             "image/jpeg",
@@ -55,7 +53,7 @@ export function validateMagicBytes(buffer) {
 // ─── Process Image with Sharp ───────────────────────────────────────────────────
 export async function processImageToWebp(buffer) {
     return await sharp(buffer)
-        .rotate() // auto-rotate based on EXIF before stripping
+        .rotate() 
         .webp({ quality: 85 })
         .toBuffer();
 }
@@ -71,6 +69,6 @@ export async function uploadToImageKit(buffer, folderName) {
         file: fileData,
         fileName,
         folder: folderName,
-        useUniqueFileName: false, // we already generate UUID
+        useUniqueFileName: false, 
     });
 }

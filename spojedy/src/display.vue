@@ -3,8 +3,8 @@ import Navbar from '@/component/navbar.vue';
 import SideBar from '@/component/sideBar.vue';
 import SongPlayer from '@/component/songPlayer.vue';
 import { useRoute } from 'vue-router';
-import { computed, watch } from 'vue';
-import { currentSong, stopSong } from '@/stores/playerStore';
+import { computed, watch, onMounted, onUnmounted } from 'vue';
+import { currentSong, stopSong, togglePlayPause, videoTogglePlayPause } from '@/stores/playerStore';
 
 const route = useRoute();
 
@@ -20,6 +20,29 @@ watch(() => route.name, (newName) => {
     stopSong();
   }
 }, { immediate: true });
+
+const handleKeydown = (event) => {
+  if (event.code !== 'Space') return;
+
+  const tag = event.target.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || event.target.isContentEditable) return;
+
+  event.preventDefault();
+
+  if (videoTogglePlayPause.value) {
+    videoTogglePlayPause.value();
+  } else if (currentSong.value) {
+    togglePlayPause();
+  }
+};
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown);
+});
 </script>
 
 <template>

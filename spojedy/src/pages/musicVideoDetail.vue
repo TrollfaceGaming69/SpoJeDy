@@ -1,11 +1,12 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
 import { assets } from '@/assets/assets';
-import { ref, onMounted, watch } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { apiService } from '@/api/apiService';
+import { videoTogglePlayPause } from '@/stores/playerStore';
+import { mediaCache } from '@/utils/mediaCache';
 
 const route = useRoute();
-const { id } = route.params;
 const selectedVideo = ref(null);
 const navigate = useRouter();
 
@@ -14,25 +15,45 @@ const currentTime = ref(0);
 const duration = ref(0);
 const videoElement = ref(null);
 
+let loadRequestId = 0;
+
 const loadVideo = async (videoId) => {
+  const currentReq = ++loadRequestId;
   console.log('Fetching video with ID:', videoId);
   const fetchedVideo = await apiService.getMusicVideoById(videoId);
-  console.log('Fetched video:', fetchedVideo);
+  if (currentReq !== loadRequestId) return;
+
   if (fetchedVideo) {
+    const rawSrc = typeof fetchedVideo.src === 'string' ? fetchedVideo.src.trim() : (fetchedVideo.videoUrl || '');
+    const rawCover = typeof fetchedVideo.cover === 'string' ? fetchedVideo.cover.trim() : fetchedVideo.cover;
+
+    if (rawCover) {
+      mediaCache.prefetchMedia(rawCover, 'image');
+    }
+
+    const cachedVideoSrc = await mediaCache.getMediaUrl(rawSrc, 'video');
+    if (currentReq !== loadRequestId) return;
+
     const normalizedVideo = {
       ...fetchedVideo,
-      src: typeof fetchedVideo.src === 'string' ? fetchedVideo.src.trim() : fetchedVideo.src,
-      cover: typeof fetchedVideo.cover === 'string' ? fetchedVideo.cover.trim() : fetchedVideo.cover,
+      src: cachedVideoSrc,
+      cover: rawCover,
     };
 
     selectedVideo.value = normalizedVideo;
     currentTime.value = 0;
     duration.value = 0;
+    isPlaying.value = false;
   }
 };
 
 onMounted(() => {
-  loadVideo(id);
+  loadVideo(route.params.id);
+  videoTogglePlayPause.value = togglePlayPause;
+});
+
+onUnmounted(() => {
+  videoTogglePlayPause.value = null;
 });
 
 watch(() => route.params.id, (newId) => {
@@ -41,28 +62,25 @@ watch(() => route.params.id, (newId) => {
   }
 });
 
-watch(() => selectedVideo.value, () => {
-  if (videoElement.value && isPlaying.value) {
-    setTimeout(() => {
-      videoElement.value?.play();
-    }, 100);
-  }
-});
-
 const togglePlayPause = async () => {
   if (!videoElement.value) return;
   if (isPlaying.value) {
     videoElement.value.pause();
-    isPlaying.value = false;
   } else {
     try {
       await videoElement.value.play();
-      isPlaying.value = true;
     } catch (error) {
       console.warn('Video play failed:', error);
-      isPlaying.value = false;
     }
   }
+};
+
+const onPlay = () => {
+  isPlaying.value = true;
+};
+
+const onPause = () => {
+  isPlaying.value = false;
 };
 
 const formatTime = (time) => {
@@ -110,7 +128,6 @@ const playPreviousVideo = () => {
   isPlaying.value = false;
   navigate.push({ name: 'videodetail', params: { id: previousId } });
 };
-
 </script>
 
 <template>
@@ -122,8 +139,17 @@ const playPreviousVideo = () => {
 
     <div v-if="selectedVideo" class="relative w-full max-w-7xl mx-auto overflow-hidden bg-black rounded-lg group">
 
-      <video ref="videoElement" class="w-full block cursor-pointer" :src="selectedVideo.src || selectedVideo.videoUrl" @click="togglePlayPause"
-        @timeupdate="onTimeUpdate" @loadedmetadata="onLoadedMetadata" @ended="playNextVideo"></video>
+      <video
+        ref="videoElement"
+        class="w-full block cursor-pointer"
+        :src="selectedVideo.src || selectedVideo.videoUrl"
+        @click="togglePlayPause"
+        @play="onPlay"
+        @pause="onPause"
+        @timeupdate="onTimeUpdate"
+        @loadedmetadata="onLoadedMetadata"
+        @ended="playNextVideo"
+      ></video>
 
       <div
         class="absolute bottom-0 left-0 right-0 p-4 bg-linear-to-t from-black/80 to-transparent flex flex-col gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white">

@@ -35,17 +35,36 @@ const loadSong = async (songId) => {
     selectedSong.value = normalizedSong;
 
     if (!currentSong.value || currentSong.value.id !== normalizedSong.id) {
-      playSong(normalizedSong, allSongs.value);
+      playSong(normalizedSong, globalAllSongs.value);
     }
   }
 };
 
 onMounted(async () => {
-  const songs = await apiService.getSongs();
-  if (songs.length > 0) {
-    allSongs.value = songs;
-    globalAllSongs.value = songs;
+  const targetId = Number(route.params.id);
+  const hasTargetSong = globalAllSongs.value && globalAllSongs.value.some(s => Number(s.id) === targetId);
+
+  if (!hasTargetSong || globalAllSongs.value.length === 0) {
+    const [songs, albums] = await Promise.all([
+      apiService.getSongs(),
+      apiService.getAlbums()
+    ]);
+
+    if (songs.length > 0) {
+      const album = albums.find(a => a.songs && a.songs.includes(targetId));
+      if (album && album.songs && album.songs.length > 0) {
+        const songMap = new Map(songs.map(s => [s.id, s]));
+        const albumSongs = album.songs.map(id => songMap.get(id)).filter(Boolean);
+        globalAllSongs.value = albumSongs.length > 0 ? albumSongs : songs;
+      } else {
+        globalAllSongs.value = songs;
+      }
+      allSongs.value = globalAllSongs.value;
+    }
+  } else {
+    allSongs.value = globalAllSongs.value;
   }
+
   await loadSong(route.params.id);
 });
 

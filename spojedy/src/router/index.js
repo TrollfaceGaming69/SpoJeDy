@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '@/pages/homePage.vue'
 import displayAlbum from '@/component/displayAlbum.vue'
+import displayPlaylist from '@/component/displayPlaylist.vue'
 import MusicDetail from '@/pages/musicDetail.vue'
 import MusicVideoPage from '@/pages/musicVideoPage.vue'
 import MusicVideoDetail from '@/pages/musicVideoDetail.vue'
 import Profile from '@/pages/profile.vue'
 import LoginPage from '@/pages/loginPage.vue'
-import RegisterPage from '@/pages/registerPage.vue'
 import Display from '@/display.vue'
 import AuthLayout from '@/layouts/AuthLayout.vue'
 
@@ -34,6 +34,18 @@ const router = createRouter({
           path: "",
           name: "albumdetail",
           component: displayAlbum
+        }
+      ]
+    },
+    {
+      path: "/playlist/:id",
+      component: Display,
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: "",
+          name: "playlistdetail",
+          component: displayPlaylist
         }
       ]
     },
@@ -97,18 +109,6 @@ const router = createRouter({
         }
       ]
     },
-    {
-      path: "/register",
-      component: AuthLayout,
-      meta: { requiresAuth: false },
-      children: [
-        {
-          path: "",
-          name: "register",
-          component: RegisterPage
-        }
-      ]
-    }
   ],
 })
 

@@ -3,6 +3,7 @@ import { assets } from '@/assets/assets';
 import { useRoute, useRouter } from 'vue-router';
 import { ref, onMounted, watch } from 'vue';
 import { apiService } from '@/api/apiService';
+import { playSong } from '@/stores/playerStore';
 
 const route = useRoute();
 const albumsData = ref({});
@@ -19,7 +20,10 @@ const loadAlbum = async (albumId) => {
   const allSongs = await apiService.getSongs();
   if (allSongs.length > 0) {
     if (albumsData.value.songs && albumsData.value.songs.length > 0) {
-      albumSongs.value = allSongs.filter(song => albumsData.value.songs.includes(song.id));
+      const songMap = new Map(allSongs.map(s => [s.id, s]));
+      albumSongs.value = albumsData.value.songs
+        .map(id => songMap.get(id))
+        .filter(Boolean);
     } else {
       albumSongs.value = allSongs;
     }
@@ -36,8 +40,13 @@ watch(() => route.params.id, (newId) => {
   }
 });
 
-const goToMusicDetail = (songId) => {
-    navigate.push(`/music/${songId}`);
+const playAlbumSong = (song) => {
+  if (albumSongs.value && albumSongs.value.length > 0) {
+    playSong(song, albumSongs.value);
+  } else {
+    playSong(song);
+  }
+  navigate.push(`/music/${song.id}`);
 };
 
 </script>
@@ -56,7 +65,7 @@ const goToMusicDetail = (songId) => {
                 <p>Playlist</p>
                 <h2 class="text-5xl font-bold mb-4 md:text-7xl">{{ albumsData.name }}</h2>
                 <h4>{{ albumsData.artist }}</h4>
-                <p class="mt-1">12 Songs</p>
+                <p class="mt-1">{{ albumSongs.length }} Songs</p>
             </div>
         </div>
 
@@ -68,7 +77,7 @@ const goToMusicDetail = (songId) => {
 
         <hr class="h-px bg-white">
 
-        <div v-for="(item, index) in albumSongs" :key="index" @click="goToMusicDetail(item.id)"
+        <div v-for="(item, index) in albumSongs" :key="index" @click="playAlbumSong(item)"
             class="grid grid-cols-3 sm:grid-cols-4 gap-2 p-2 items-center text-[#a7a7a7] hover:bg-[#ffffff2b] cursor-pointer">
             <p class="text-white">
                 <b class="mr-4 text-[#a7a7a7]">{{ index + 1 }}</b>

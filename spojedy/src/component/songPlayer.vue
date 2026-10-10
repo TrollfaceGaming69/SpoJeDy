@@ -11,7 +11,8 @@ import {
   playNext,
   playPrevious,
   toggleLoop,
-  seek
+  seek,
+  volume
 } from '@/stores/playerStore';
 
 const navigate = useRouter();
@@ -32,6 +33,14 @@ const onProgressClick = (event) => {
   const rect = progressBar.getBoundingClientRect();
   const percent = (event.clientX - rect.left) / rect.width;
   seek(percent * duration.value);
+};
+
+const onVolumeClick = (event) => {
+  const volumeBar = event.currentTarget;
+  const rect = volumeBar.getBoundingClientRect();
+  let percent = (event.clientX - rect.left) / rect.width;
+  percent = Math.max(0, Math.min(1, percent));
+  volume.value = percent;
 };
 
 const goToDetail = () => {
@@ -78,8 +87,10 @@ const goToDetail = () => {
             <img class="w-4" :src="assets.queue_icon" alt="">
             <img class="w-4" :src="assets.speaker_icon" alt="">
             <img class="w-4" :src="assets.volume_icon" alt="">
-            <div class="w-20 bg-zinc-700 h-1 rounded-full overflow-hidden">
-                <div class="bg-white h-full w-[70%]"></div>
+            <div class="w-20 py-3 cursor-pointer flex items-center" @click="onVolumeClick">
+                <div class="w-full bg-gray-300 rounded-full h-1">
+                    <hr class="h-1 border-none bg-green-600 rounded-full" :style="{ width: (volume * 100) + '%' }">
+                </div>
             </div>
             <img class="w-4" :src="assets.mini_player_icon" alt="">
             <img class="w-4 cursor-pointer hover:opacity-100" :src="assets.zoom_icon" alt="" @click="goToDetail">

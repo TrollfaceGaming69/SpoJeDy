@@ -6,7 +6,6 @@ import ratelimit from "express-rate-limit"
 
 const router = express.Router();
 
-// rate limiter
 const loginLimiter = ratelimit({
     windowMs: 5 * 60 * 1000,
     max: 3,

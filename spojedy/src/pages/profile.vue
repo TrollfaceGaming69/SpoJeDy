@@ -1,8 +1,9 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import MusicVideoItem from '@/component/musicVideoItem.vue';
 import { assets} from '@/assets/assets';
 import SongItem from '@/component/songItem.vue';
+import PlayListItem from '@/component/playListItem.vue';
 import { useRouter } from 'vue-router';
 import { apiService } from '@/api/apiService';
 
@@ -12,6 +13,7 @@ const profileImage = ref(null);
 const fileInput = ref(null);
 const songs = ref([]);
 const videos = ref([]);
+const playlists = ref([]);
 const username = ref('User'); 
 const selectedFile = ref(null);
 
@@ -121,6 +123,11 @@ onMounted(async () => {
         }
     }
     
+    const fetchedPlaylists = await apiService.getPlaylists();
+    if (Array.isArray(fetchedPlaylists)) {
+        playlists.value = fetchedPlaylists;
+    }
+
     const fetchedSongs = await apiService.getSongs();
     if (fetchedSongs.length > 0) {
         songs.value = fetchedSongs;
@@ -130,6 +137,19 @@ onMounted(async () => {
     if (fetchedVideos.length > 0) {
         videos.value = fetchedVideos;
     }
+
+    window.addEventListener('playlist-updated', handlePlaylistUpdated);
+});
+
+const handlePlaylistUpdated = async () => {
+    const fetchedPlaylists = await apiService.getPlaylists();
+    if (Array.isArray(fetchedPlaylists)) {
+        playlists.value = fetchedPlaylists;
+    }
+};
+
+onUnmounted(() => {
+    window.removeEventListener('playlist-updated', handlePlaylistUpdated);
 });
 </script>
 
@@ -163,8 +183,20 @@ onMounted(async () => {
         <div class="mt-8">
             <div>
                 <h1 class="my-5 font-bold text-2xl">Your Playlists</h1>
-                <div class="flex overflow-auto">
-                    </div>
+                <div v-if="playlists.length > 0" class="flex overflow-auto">
+                    <PlayListItem 
+                        v-for="playlist in playlists" 
+                        :key="playlist.id" 
+                        :id="playlist.id" 
+                        :name="playlist.name" 
+                        :cover="playlist.cover" 
+                        :description="playlist.description" 
+                        :songs="playlist.songs" 
+                    />
+                </div>
+                <div v-else class="text-zinc-400 text-sm py-4 italic">
+                    <p>No playlists created yet.</p>
+                </div>
             </div>
 
             <div>

@@ -1,4 +1,5 @@
 import { ref, watch } from 'vue';
+import { mediaCache } from '@/utils/mediaCache';
 
 export const currentSong = ref(null);
 export const isPlaying = ref(false);
@@ -7,7 +8,17 @@ export const duration = ref(0);
 export const isLooping = ref(false);
 export const allSongs = ref([]);
 
+// Restore volume from localStorage if available
+const savedVolume = localStorage.getItem('player_volume');
+const initialVolume = savedVolume !== null && !isNaN(parseFloat(savedVolume)) ? parseFloat(savedVolume) : 0.7;
+export const volume = ref(initialVolume);
+
+export const videoTogglePlayPause = ref(null);
+
 const audio = new Audio();
+audio.volume = volume.value;
+
+let currentPlayRequestId = 0;
 
 audio.addEventListener('timeupdate', () => {
   currentTime.value = audio.currentTime;
@@ -17,7 +28,16 @@ audio.addEventListener('loadedmetadata', () => {
   duration.value = audio.duration;
 });
 
+audio.addEventListener('playing', () => {
+  isPlaying.value = true;
+});
+
+audio.addEventListener('pause', () => {
+  isPlaying.value = false;
+});
+
 audio.addEventListener('ended', () => {
+  isPlaying.value = false;
   if (!isLooping.value) {
     playNext();
   }
@@ -27,7 +47,29 @@ watch(isLooping, (newVal) => {
   audio.loop = newVal;
 });
 
-export const playSong = (song, songsList = []) => {
+watch(volume, (newVal) => {
+  audio.volume = newVal;
+  try {
+    localStorage.setItem('player_volume', newVal.toString());
+  } catch (err) {
+    console.warn('Failed to save volume to localStorage:', err);
+  }
+});
+
+function prefetchNextSong() {
+  if (!allSongs.value || allSongs.value.length === 0 || !currentSong.value) return;
+  const currentIndex = allSongs.value.findIndex((s) => s.id === currentSong.value.id);
+  if (currentIndex !== -1) {
+    const nextIndex = (currentIndex + 1) % allSongs.value.length;
+    const nextSong = allSongs.value[nextIndex];
+    if (nextSong) {
+      if (nextSong.src) mediaCache.prefetchMedia(nextSong.src, 'audio');
+      if (nextSong.cover) mediaCache.prefetchMedia(nextSong.cover, 'image');
+    }
+  }
+}
+
+export const playSong = async (song, songsList = []) => {
   const normalizedSong = song && typeof song === 'object'
     ? {
         ...song,
@@ -38,24 +80,34 @@ export const playSong = (song, songsList = []) => {
 
   if (!normalizedSong || !normalizedSong.src) return;
 
+  const requestId = ++currentPlayRequestId;
+
   if (songsList && songsList.length > 0) {
     allSongs.value = songsList;
   }
 
-  if (!currentSong.value || currentSong.value.id !== normalizedSong.id) {
-    currentSong.value = normalizedSong;
-    audio.src = normalizedSong.src;
+  const songIdChanged = !currentSong.value || currentSong.value.id !== normalizedSong.id;
+  currentSong.value = normalizedSong;
+
+  if (normalizedSong.cover) {
+    mediaCache.prefetchMedia(normalizedSong.cover, 'image');
+  }
+
+  if (songIdChanged) {
+    const mediaUrl = await mediaCache.getMediaUrl(normalizedSong.src, 'audio');
+    if (requestId !== currentPlayRequestId) return;
+
+    audio.src = mediaUrl;
     audio.load();
   }
 
-  audio.play()
-    .then(() => {
-      isPlaying.value = true;
-    })
-    .catch((err) => {
-      console.warn('Audio play was prevented or failed:', err);
-      isPlaying.value = false;
-    });
+  if (requestId !== currentPlayRequestId) return;
+
+  audio.play().catch((err) => {
+    console.warn('Audio play failed or was prevented:', err);
+  });
+
+  prefetchNextSong();
 };
 
 export const pauseSong = () => {
@@ -67,13 +119,9 @@ export const togglePlayPause = () => {
   if (isPlaying.value) {
     pauseSong();
   } else if (currentSong.value) {
-    audio.play()
-      .then(() => {
-        isPlaying.value = true;
-      })
-      .catch((err) => {
-        console.warn('Audio play failed:', err);
-      });
+    audio.play().catch((err) => {
+      console.warn('Audio play failed:', err);
+    });
   }
 };
 
