@@ -21,7 +21,7 @@ if (process.env.FRONTEND_URL) {
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.some((pattern) => pattern.test(origin))) {
+    if (!origin || allowedOrigins.some((pattern) => pattern instanceof RegExp ? pattern.test(origin) : pattern === origin)) {
       callback(null, true)
       return
     }
