@@ -6,7 +6,7 @@ projek matkul binus digidaw awikwok
 ![Preview](https://i.pinimg.com/736x/43/b8/6e/43b86e47b2fb881380bf816b4dde324e.jpg)
 
 
-## Tutor Setup
+## How 2 Setup Locally
 
 ### Clone repository
 ```sh
@@ -14,42 +14,42 @@ git clone [https://github.com/username/nama-repositori.git](https://github.com/u
 cd nama-repositori
 ```
 
-### Di folder utama
+### In the main folder
 ```sh
 npm install tailwindcss @tailwindcss/vite
 ```
 
-### Masuk folder spojedy
+### Cd to the spojedy folder
 
 ```sh
 cd spojedy
 npm install
 ```
 
-### Masuk folder backed
+### Cd to the backend folder
 
 ```sh
 cd backend
 npm install
 ```
 
-### Tambah Mongo URI di .env
+### Add the Mongo URI in .env
 
 ```sh
 MONGO_URI=mongodb://<namaUser>:<password>@ac-jqcujoo-shard-00-00.ywus1cc.mongodb.net:27017,ac-jqcujoo-shard-00-01.ywus1cc.mongodb.net:27017,ac-jqcujoo-shard-00-02.ywus1cc.mongodb.net:27017/spojedy?ssl=true&replicaSet=atlas-2m0d14-shard-0&authSource=admin&appName=<AppName>
 (ganti <namaUser> <passowrd> dan <AppName>)
 ```
 
-## Tutor Jalanin
+## How 2 Run 
 
-### Masuk folder spojedy
+### Cd to the spojedy folder
 
 ```sh
 cd spojedy
 npm run dev (buat jalanin frontend)
 ```
 
-### Masuk folder backed (buka terminal baru)
+### Cd to the backend (open a new terminal)
 
 ```sh
 cd backend
